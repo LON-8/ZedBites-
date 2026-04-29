@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ff6b00">
+    <meta name="description" content="ZedBites - Zambia's Food Guide. Find the best restaurants near you.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ZedBites">
+    <title>ZedBites | Zambia's Food Guide</title>
+    <meta property="og:title" content="ZedBites — Zambia's Food Guide">
+    <meta property="og:description" content="Find the best restaurants across Zambia. Browse, rate and discover great food near you.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="manifest" href="#" id="manifestLink">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--primary:#ff6b00;--primary-light:#ff6b0018;--bg:#0a0a0a;--card-bg:#161616;--text:#ffffff;--border:#2a2a2a;--input-bg:#1e1e1e;--sub-text:#777;--modal-bg:#161616;--overlay:rgba(0,0,0,0.88);--green:#4caf50;--red:#f44336;--orange:#ff9500;--blue:#4285f4;}
+        body.light-mode{--bg:#fdf6f0;--card-bg:#ffffff;--text:#1a1208;--border:#e8d5c4;--input-bg:#f5ede4;--sub-text:#8a6a52;--modal-bg:#ffffff;--overlay:rgba(0,0,0,0.65);}
+        body.light-mode nav{background:rgba(253,246,240,0.95);}
+        body.light-mode .tab-bar{background:#fdf6f0;}
+        body.light-mode .card{box-shadow:0 2px 12px rgba(180,100,30,0.08);}
+        body.light-mode .nav-icon-btn{background:#fff;}
+        body.light-mode .cat-btn{background:#fff;}
+        body.light-mode footer{background:#fdf6f0;}
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);scroll-behavior:smooth;overflow-x:hidden;}
+
+        /* SPLASH */
+        #splash{position:fixed;inset:0;background:#0a0a0a;z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:opacity 0.6s;}
+        .splash-logo{font-size:52px;font-weight:800;color:var(--primary);letter-spacing:3px;animation:splashPop 0.7s cubic-bezier(0.34,1.56,0.64,1) both;}
+        .splash-tagline{color:#555;font-size:13px;margin-top:8px;letter-spacing:2px;text-transform:uppercase;animation:fadeUp 0.6s 0.3s both;}
+        .splash-dots{display:flex;gap:8px;margin-top:30px;animation:fadeUp 0.6s 0.5s both;}
+        .splash-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);animation:dotBounce 1.2s infinite;}
+        .splash-dot:nth-child(2){animation-delay:0.2s;}.splash-dot:nth-child(3){animation-delay:0.4s;}
+        @keyframes splashPop{from{opacity:0;transform:scale(0.7);}to{opacity:1;transform:scale(1);}}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+        @keyframes dotBounce{0%,80%,100%{transform:scale(0.6);opacity:0.4;}40%{transform:scale(1);opacity:1;}}
+
+        /* STICKY HEADER WRAPPER — nav + tabs move as one unit */
+        #stickyHeader{position:sticky;top:0;z-index:1000;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);}
+        #stickyHeader.header-hidden{transform:translateY(-100%);}
+
+        /* NAV */
+        nav{background:var(--bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;padding:14px 15px 15px;border-bottom:1px solid var(--border);transition:padding 0.3s;}
+        nav.nav-compact{padding:8px 15px 10px;}
+        nav.nav-compact .nav-top-row{margin-bottom:8px;}
+        nav.nav-compact h1{font-size:22px;}
+        nav.nav-compact .nav-icon-btn{width:34px;height:34px;}
+        .nav-top-row{width:100%;max-width:420px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-bottom:14px;transition:margin-bottom 0.3s;}
+        nav h1{color:var(--primary);font-size:27px;letter-spacing:1px;font-weight:800;cursor:default;text-align:center;transition:font-size 0.3s;}
+        .nav-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;}
+        .nav-icon-btn{background:var(--card-bg);border:1px solid var(--border);color:var(--text);border-radius:50%;cursor:pointer;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:15px;transition:transform 0.15s,width 0.3s,height 0.3s;}
+        .nav-icon-btn:active{transform:scale(0.9);}
+        .install-btn{display:none;}.install-btn.visible{display:flex;}
+        .nav-controls{width:100%;max-width:420px;display:flex;flex-direction:column;gap:10px;}
+        .city-picker{width:100%;padding:11px 14px;border-radius:12px;background:var(--input-bg);color:var(--text);border:1px solid var(--border);outline:none;font-family:inherit;font-size:14px;transition:border-color 0.2s;}
+        .city-picker:focus{border-color:var(--primary);}
+        .search-wrap{display:flex;gap:8px;position:relative;}
+        .search-wrap input{flex:1;padding:11px 40px 11px 15px;border:1px solid var(--border);border-radius:12px;background:var(--input-bg);color:var(--text);outline:none;font-size:13px;font-family:inherit;transition:border-color 0.2s;}
+        .search-wrap input:focus{border-color:var(--primary);}
+        .search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--sub-text);font-size:16px;cursor:pointer;display:none;}
+        .search-clear.visible{display:block;}
+
+        /* TAB BAR — flows naturally inside #stickyHeader */
+        .tab-bar{display:flex;border-bottom:1px solid var(--border);background:var(--bg);}
+        .tab-btn{flex:1;padding:12px 0;font-family:inherit;font-size:12px;font-weight:600;background:none;border:none;color:var(--sub-text);cursor:pointer;border-bottom:2px solid transparent;transition:color 0.2s,border-color 0.2s;}
+        .tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);}
+
+        /* HEADER */
+        header{padding:28px 20px 10px;text-align:center;}
+        header h2{font-size:22px;color:var(--primary);font-weight:700;}
+        header p{font-size:13px;color:var(--sub-text);margin-top:6px;}
+
+        /* CATEGORY FILTER */
+        .category-filter{display:flex;overflow-x:auto;gap:8px;padding:12px 15px;scrollbar-width:none;}
+        .category-filter::-webkit-scrollbar{height:0;}
+        .cat-btn{flex:0 0 auto;padding:8px 16px;border-radius:25px;background:var(--card-bg);color:var(--sub-text);border:1px solid var(--border);font-size:12px;font-family:inherit;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;gap:5px;}
+        .cat-btn i{font-size:15px;flex-shrink:0;color:inherit;}
+        .cat-btn.active{background:var(--primary);color:white !important;font-weight:600;border-color:var(--primary);padding:8px 13px;justify-content:center;}
+        .cat-btn.active i{color:white !important;}
+        .cat-btn.active .cat-label{display:none;}
+
+        /* FILTER ROW */
+        .filter-row{display:flex;gap:8px;overflow-x:auto;padding:10px 15px;scrollbar-width:none;max-width:1200px;margin:auto;border-bottom:1px solid var(--border);align-items:center;}
+        .filter-row::-webkit-scrollbar{height:0;}
+        @media(min-width:600px){
+            .filter-row{scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+            .filter-row::-webkit-scrollbar{height:3px;}
+            .filter-row::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+            .category-filter{scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+            .category-filter::-webkit-scrollbar{height:3px;}
+            .category-filter::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+        }
+        .filter-divider{width:1px;height:20px;background:var(--border);flex-shrink:0;margin:0 2px;}
+        /* open now toggle pill */
+        .switch{position:relative;width:44px;height:24px;flex-shrink:0;}
+        .switch input{opacity:0;width:0;height:0;}
+        .open-now-pill{display:flex;align-items:center;gap:8px;flex:0 0 auto;padding:4px 13px 4px 8px;border-radius:20px;border:1px solid var(--border);background:var(--card-bg);cursor:pointer;white-space:nowrap;user-select:none;}
+        .open-now-pill input[type=checkbox]{opacity:0;width:0;height:0;position:absolute;}
+        .open-now-pill .slider{position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;background:var(--border);border-radius:34px;transition:.3s;cursor:pointer;}
+        .open-now-pill .slider:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background:white;transition:.3s;border-radius:50%;}
+        .open-now-pill input:checked+.slider{background:var(--green);}
+        .open-now-pill input:checked+.slider:before{transform:translateX(16px);}
+        .open-now-pill .open-now-text{font-size:11px;color:var(--sub-text);}
+        .open-now-pill.active{background:var(--primary-light);border-color:var(--primary);}
+        .open-now-pill.active .open-now-text{color:var(--primary);font-weight:600;}
+        .filter-row-btn{flex:0 0 auto;padding:6px 13px;border-radius:20px;border:1px solid var(--border);background:var(--card-bg);color:var(--sub-text);font-size:11px;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all 0.2s;}
+        .filter-row-btn.active{background:var(--primary-light);border-color:var(--primary);color:var(--primary);font-weight:600;}
+        .filter-row-btn.active .btn-label{display:none;}
+        .sort-chip{flex:0 0 auto;padding:6px 13px;border-radius:20px;border:1px solid transparent;background:transparent;color:var(--sub-text);font-size:11px;font-family:inherit;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+        .sort-chip.active{border-color:var(--primary);color:var(--primary);font-weight:600;background:var(--primary-light);}
+
+        /* RESULT COUNT */
+        .result-bar{padding:10px 15px 0;max-width:1200px;margin:auto;}
+        .result-count{font-size:12px;color:var(--sub-text);}
+        .result-count strong{color:var(--primary);}
+
+        /* RECENTLY VIEWED */
+        .recent-section{padding:12px 15px 0;max-width:1200px;margin:auto;}
+        .recent-section h4{font-size:10px;color:var(--sub-text);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+        .recent-scroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:10px;}
+        .recent-scroll::-webkit-scrollbar{display:none;}
+        .recent-chip{flex:0 0 auto;display:flex;align-items:center;gap:7px;background:var(--card-bg);border:1px solid var(--border);border-radius:25px;padding:5px 12px 5px 5px;cursor:pointer;font-size:12px;color:var(--text);transition:border-color 0.2s;}
+        .recent-chip:active{border-color:var(--primary);}
+        .recent-chip img{width:24px;height:24px;border-radius:50%;object-fit:cover;}
+
+        /* RECENTLY ADDED */
+        .new-section{padding:14px 15px 4px;max-width:1200px;margin:auto;}
+        .new-section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+        .new-section-title{font-size:11px;font-weight:700;color:var(--sub-text);text-transform:uppercase;letter-spacing:1px;}
+        .new-scroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
+        .new-scroll::-webkit-scrollbar{display:none;}
+        .new-r-card{flex:0 0 140px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform 0.15s;}
+        .new-r-card:active{transform:scale(0.97);}
+        .new-r-img{width:100%;height:80px;object-fit:cover;display:block;}
+        .new-r-body{padding:8px 10px 10px;}
+        .new-r-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+        .new-r-loc{font-size:10px;color:var(--sub-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .new-r-badge{font-size:9px;font-weight:800;color:var(--primary);margin-top:3px;text-transform:uppercase;letter-spacing:0.5px;}
+
+        /* CARDS */
+        .section{padding:15px 15px 100px;max-width:1200px;margin:auto;min-height:400px;}
+        .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:14px;}
+        @keyframes cardIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+        .card{background:var(--card-bg);border-radius:18px;overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;animation:cardIn 0.35s ease both;}
+        .card:active{transform:scale(0.97);}
+        .img-container{width:100%;height:130px;background:#1a1a1a;position:relative;overflow:hidden;}
+        .card img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s;}
+        .card:hover img{transform:scale(1.04);}
+        .cat-icon-badge{position:absolute;bottom:7px;left:7px;background:rgba(0,0,0,0.65);border-radius:10px;padding:2px 7px;font-size:12px;backdrop-filter:blur(6px);}
+        .fav-btn{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.5);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;backdrop-filter:blur(4px);z-index:2;transition:transform 0.2s;}
+        .fav-btn:active{transform:scale(1.35);}
+        .fav-btn.favorited{background:rgba(255,107,0,0.85);}
+        .visited-badge{position:absolute;top:8px;left:8px;background:rgba(76,175,80,0.85);border-radius:10px;padding:2px 7px;font-size:10px;font-weight:700;color:white;backdrop-filter:blur(4px);}
+        .card-content{padding:11px 13px 13px;}
+        .card h3{font-size:13px;margin-bottom:3px;font-weight:700;line-height:1.3;}
+        .loc-text{font-size:11px;color:var(--sub-text);display:block;margin-bottom:4px;}
+        .card-rating{display:flex;align-items:center;gap:4px;margin-bottom:8px;}
+        .rating-count{font-size:10px;color:var(--sub-text);}
+        .btn-group{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+        .btn-group a{padding:9px 0;border-radius:10px;font-size:11px;text-align:center;text-decoration:none;font-weight:700;transition:opacity 0.2s;}
+        .btn-group a:active{opacity:0.7;}
+        .btn-call{background:var(--primary);color:white!important;border:1px solid var(--primary);}
+        .btn-wa{background:transparent;color:var(--text)!important;border:1px solid var(--border);}
+
+        /* STATUS */
+        .status-badge{font-size:9px;font-weight:700;display:inline-block;margin-bottom:4px;letter-spacing:0.5px;}
+        .s-open{color:var(--green);}.s-closed{color:var(--red);}.s-soon{color:var(--orange);}.s-closing{color:#ff5722;}
+
+        /* SKELETON */
+        .skeleton-card{background:var(--card-bg);border-radius:18px;overflow:hidden;border:1px solid var(--border);}
+        .skel-anim{background:linear-gradient(90deg,var(--card-bg) 25%,var(--border) 50%,var(--card-bg) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;}
+        .skeleton-img{width:100%;height:130px;}
+        .skeleton-line{height:11px;border-radius:6px;margin:8px 13px;}
+        .skeleton-line.short{width:55%;}.skeleton-line.medium{width:80%;}
+        .skeleton-btns{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:8px 13px 13px;}
+        .skeleton-btn{height:33px;border-radius:10px;}
+        @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+        /* EMPTY STATE */
+        .empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;}
+        .empty-icon{font-size:56px;margin-bottom:14px;}
+        .empty-state h3{font-size:17px;margin-bottom:8px;font-weight:700;}
+        .empty-state p{font-size:13px;color:var(--sub-text);margin-bottom:20px;}
+        .empty-state button{background:var(--primary);color:white;border:none;padding:13px 28px;border-radius:25px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;}
+
+        /* MODAL */
+        .modal-overlay{position:fixed;inset:0;background:var(--overlay);z-index:2000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+        .modal-overlay.open{opacity:1;pointer-events:all;}
+        .modal{background:var(--modal-bg);width:100%;max-width:600px;border-radius:26px 26px 0 0;padding:0 0 40px;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.34,1.2,0.64,1);max-height:92vh;overflow-y:auto;touch-action:pan-y;}
+        .modal-overlay.open .modal{transform:translateY(0);}
+        .modal-top-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 10px;gap:10px;}
+        .modal-close-btn{background:var(--input-bg);border:1px solid var(--border);color:var(--text);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0;}
+        .modal-nav-counter{font-size:12px;font-weight:600;color:var(--sub-text);flex:1;text-align:center;}
+        .modal-nav-arrows{display:flex;gap:8px;flex-shrink:0;}
+        .modal-nav-arrow{background:var(--input-bg);border:1px solid var(--border);color:var(--text);width:38px;height:38px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;line-height:1;}
+        .modal-nav-arrow:disabled{opacity:0.25;cursor:default;}
+        .modal-nav-arrow:not(:disabled):active{transform:scale(0.9);border-color:var(--primary);color:var(--primary);}
+        .modal-handle-row{display:none;}
+        .modal-handle{display:none;}
+        .modal-img{width:100%;height:220px;object-fit:cover;}
+        .modal-body{padding:18px 20px 10px;}
+        .modal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;}
+        .modal-title{font-size:22px;font-weight:800;flex:1;padding-right:10px;line-height:1.2;}
+        .modal-fav-btn{background:var(--card-bg);border:1px solid var(--border);border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;flex-shrink:0;transition:background 0.2s;}
+        .modal-fav-btn.favorited{background:var(--primary-light);border-color:var(--primary);}
+        .modal-location{font-size:13px;color:var(--sub-text);margin-bottom:3px;}
+        .modal-city{font-size:12px;color:var(--primary);font-weight:600;margin-bottom:14px;}
+        .modal-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px;}
+        .modal-tag{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;background:var(--input-bg);color:var(--sub-text);border:1px solid var(--border);}
+        .modal-tag.status-open{background:#4caf5020;color:var(--green);border-color:var(--green);}
+        .modal-tag.status-closed{background:#f4433620;color:var(--red);border-color:var(--red);}
+        .modal-tag.status-soon{background:#ff950020;color:var(--orange);border-color:var(--orange);}
+        .modal-tag.status-closing{background:#ff572220;color:#ff5722;border-color:#ff5722;}
+        .modal-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+        .modal-info-item{background:var(--input-bg);border-radius:14px;padding:13px;}
+        .modal-info-label{font-size:10px;color:var(--sub-text);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;}
+        .modal-info-value{font-size:13px;font-weight:600;}
+        .modal-dishes{margin-bottom:16px;}
+        .modal-dishes h4{font-size:11px;color:var(--sub-text);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+        .dish-list{display:flex;gap:7px;flex-wrap:wrap;}
+        .dish-chip{padding:6px 13px;background:var(--input-bg);border-radius:20px;font-size:12px;border:1px solid var(--border);}
+        .modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px;margin-top:10px;}
+        .modal-btn{padding:14px;border-radius:14px;font-size:13px;text-align:center;text-decoration:none;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;border:none;cursor:pointer;font-family:inherit;transition:opacity 0.2s;}
+        .modal-btn:active{opacity:0.75;}
+        .modal-btn-call{background:var(--input-bg);color:var(--text);border:1px solid var(--border);}
+        .modal-btn-wa{background:#25d366;color:#000;}
+        .modal-btn-maps{background:var(--blue);color:white;}
+        .modal-share-btn{background:var(--primary);color:white;}
+        .modal-visit-btn{background:var(--input-bg);color:var(--text);border:1px solid var(--border);}
+        .modal-visit-btn.visited{background:#4caf5020;border-color:var(--green);color:var(--green);}
+
+        /* RATINGS */
+        .rating-section{padding:0 20px;margin-top:16px;}
+        .rating-section h4{font-size:11px;color:var(--sub-text);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+        .rating-summary{display:flex;align-items:center;gap:15px;margin-bottom:14px;}
+        .rating-big{font-size:38px;font-weight:800;color:var(--primary);line-height:1;}
+        .rating-total{font-size:11px;color:var(--sub-text);margin-top:3px;}
+        .rating-bars{flex:1;}
+        .rating-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+        .rating-bar-label{font-size:10px;color:var(--sub-text);width:8px;text-align:right;}
+        .rating-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+        .rating-bar-fill{height:100%;background:#f4c430;border-radius:3px;transition:width 0.5s;}
+        .user-rating{margin-top:14px;}
+        .user-rating p{font-size:12px;color:var(--sub-text);margin-bottom:8px;}
+        .star-picker{display:flex;gap:4px;}
+        .star-pick{font-size:26px;cursor:pointer;transition:transform 0.15s,opacity 0.15s;opacity:0.3;background:none;border:none;color:#f59e0b;line-height:1;}
+        .star-pick.active{opacity:1;transform:scale(1.15);}
+        .reviews-list{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+        .review-item{background:var(--input-bg);border-radius:12px;padding:12px;}
+        .review-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+        .review-date{font-size:10px;color:var(--sub-text);}
+        .review-text{font-size:12px;color:var(--text);line-height:1.5;}
+        .review-input-row{display:flex;gap:8px;margin-top:10px;}
+        .review-input{flex:1;padding:10px 13px;border:1px solid var(--border);border-radius:12px;background:var(--input-bg);color:var(--text);font-family:inherit;font-size:13px;outline:none;}
+        .review-input:focus{border-color:var(--primary);}
+        .review-submit{background:var(--primary);color:white;border:none;border-radius:12px;padding:10px 16px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
+
+        /* MAP / NEAR ME */
+        .map-section{padding:15px;max-width:1200px;margin:auto;}
+        .near-me-btn{background:var(--primary);color:white;border:none;border-radius:12px;padding:12px 20px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;margin-bottom:14px;}
+        .map-frame{width:100%;height:350px;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--card-bg);}
+        .map-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--sub-text);}
+        .map-placeholder .map-icon{font-size:48px;}
+        .map-list{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+        .map-list-item{display:flex;align-items:center;gap:12px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:12px;cursor:pointer;transition:border-color 0.2s;}
+        .map-list-item:active{border-color:var(--primary);}
+        .map-list-img{width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;}
+        .map-list-info{flex:1;}
+        .map-list-name{font-size:13px;font-weight:700;}
+        .map-list-loc{font-size:11px;color:var(--sub-text);}
+        .map-dir-btn{background:var(--blue);color:white;border:none;border-radius:10px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
+
+        /* ADMIN */
+        .admin-section{padding:15px;max-width:1200px;margin:auto;}
+        .admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+        .admin-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:20px 18px;}
+        .admin-card-icon{font-size:26px;margin-bottom:10px;}
+        .admin-card-value{font-size:32px;font-weight:800;color:var(--primary);}
+        .admin-card-label{font-size:12px;color:var(--sub-text);margin-top:4px;}
+        .admin-section-title{font-size:13px;font-weight:700;margin-bottom:12px;}
+        .admin-city-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+        .admin-city-name{font-size:12px;width:90px;color:var(--sub-text);}
+        .admin-city-bar-track{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+        .admin-city-bar-fill{height:100%;background:var(--primary);border-radius:4px;transition:width 0.6s;}
+        .admin-city-count{font-size:11px;font-weight:700;color:var(--primary);min-width:20px;text-align:right;}
+        .admin-top-list{display:flex;flex-direction:column;gap:8px;}
+        .admin-top-item{display:flex;align-items:center;gap:10px;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:10px 12px;}
+        .admin-top-rank{font-size:16px;width:24px;text-align:center;}
+        .admin-top-info{flex:1;}
+        .admin-top-name{font-size:13px;font-weight:600;}
+        .admin-top-city{font-size:11px;color:var(--sub-text);}
+        .admin-top-stat{font-size:12px;font-weight:700;color:var(--primary);}
+
+        /* ADD PANEL */
+        .add-fab{position:fixed;bottom:25px;left:25px;background:#1a1a1a;color:white;border:1px solid var(--border);border-radius:50px;padding:13px 20px;font-weight:700;z-index:99;font-family:inherit;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,0.4);transition:transform 0.2s;}
+        .add-fab:active{transform:scale(0.95);}
+        body.light-mode .add-fab{background:#fff;color:#111;}
+        .add-overlay{position:fixed;inset:0;background:var(--overlay);z-index:2500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+        .add-overlay.open{opacity:1;pointer-events:all;}
+        .add-panel{background:var(--modal-bg);width:100%;max-width:600px;border-radius:26px 26px 0 0;padding:0 0 40px;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.34,1.2,0.64,1);max-height:92vh;overflow-y:auto;touch-action:pan-y;}
+        .add-overlay.open .add-panel{transform:translateY(0);}
+        .add-panel-handle-row{display:flex;align-items:center;justify-content:center;position:relative;padding:12px 15px 4px;}
+        .add-panel-handle{width:40px;height:4px;background:var(--border);border-radius:2px;}
+        .add-panel-close{position:absolute;right:15px;top:8px;background:var(--input-bg);border:1px solid var(--border);color:var(--text);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;}
+        .add-panel-body{padding:10px 20px 0;}
+        .add-panel-title{font-size:20px;font-weight:800;color:var(--primary);margin-bottom:4px;}
+        .add-panel-sub{font-size:12px;color:var(--sub-text);margin-bottom:20px;}
+        .form-group{margin-bottom:15px;}
+        .form-label{font-size:11px;color:var(--sub-text);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:block;}
+        .form-input{width:100%;padding:13px 14px;border:1px solid var(--border);border-radius:12px;background:var(--input-bg);color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:border-color 0.2s;}
+        .form-input:focus{border-color:var(--primary);}
+        .form-select{width:100%;padding:13px 14px;border:1px solid var(--border);border-radius:12px;background:var(--input-bg);color:var(--text);font-family:inherit;font-size:14px;outline:none;appearance:none;}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+        .form-hint{font-size:11px;color:var(--sub-text);margin-top:5px;}
+        .cat-picker{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+        .cat-pick-btn{padding:11px;border-radius:12px;border:1px solid var(--border);background:var(--input-bg);color:var(--sub-text);font-family:inherit;font-size:13px;cursor:pointer;text-align:center;transition:all 0.2s;}
+        .cat-pick-btn.selected{border-color:var(--primary);color:var(--primary);background:var(--primary-light);font-weight:600;}
+        .hour-picker{display:flex;align-items:center;gap:10px;}
+        .hour-picker input[type=range]{flex:1;accent-color:var(--primary);}
+        .hour-display{font-size:14px;font-weight:700;color:var(--primary);min-width:65px;text-align:right;}
+        .img-preview{width:100%;height:140px;border-radius:12px;object-fit:cover;border:1px solid var(--border);margin-top:8px;display:none;}
+        .img-preview.visible{display:block;}
+        .add-submit-btn{width:100%;padding:16px;background:var(--primary);color:white;border:none;border-radius:14px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;}
+        .added-list-section{margin-top:25px;padding-top:20px;border-top:1px solid var(--border);}
+        .added-list-title{font-size:13px;font-weight:600;margin-bottom:12px;}
+        .added-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--input-bg);border-radius:12px;margin-bottom:8px;gap:10px;}
+        .added-item-name{font-size:13px;font-weight:600;flex:1;}
+        .added-item-city{font-size:11px;color:var(--sub-text);}
+        .added-item-actions{display:flex;gap:6px;}
+        .added-item-del{background:none;border:none;color:var(--red);font-size:18px;cursor:pointer;padding:0 4px;}
+        .added-item-edit{background:none;border:none;color:var(--primary);font-size:16px;cursor:pointer;padding:0 4px;}
+
+        /* MISC */
+        footer{padding:18px 20px;text-align:center;border-top:1px solid var(--border);margin-top:4px;}
+        footer p{font-size:10px;color:var(--sub-text);letter-spacing:2px;text-transform:uppercase;opacity:0.6;}
+        .surprise-fab{position:fixed;bottom:25px;right:20px;background:var(--primary);color:white;border:none;border-radius:50%;width:50px;height:50px;font-weight:800;z-index:99;box-shadow:0 4px 20px rgba(255,107,0,0.4);font-family:inherit;font-size:22px;cursor:pointer;transition:transform 0.15s;display:flex;align-items:center;justify-content:center;}
+        .surprise-fab:active{transform:scale(0.92);}
+        #backToTop{position:fixed;bottom:85px;right:20px;background:var(--card-bg);color:var(--text);width:40px;height:40px;border-radius:50%;border:1px solid var(--border);display:none;align-items:center;justify-content:center;z-index:98;font-size:16px;cursor:pointer;}
+        .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a1a;color:white;padding:11px 20px;border-radius:25px;font-size:13px;z-index:3000;opacity:0;transition:all 0.3s;white-space:nowrap;pointer-events:none;border:1px solid #333;}
+        body.light-mode .toast{background:#333;}
+        .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+        .install-banner{background:linear-gradient(135deg,#ff6b00,#ff9500);padding:13px 18px;display:none;align-items:center;justify-content:space-between;gap:10px;}
+        .install-banner.visible{display:flex;}
+        .install-banner p{font-size:13px;font-weight:600;color:white;flex:1;}
+        .install-banner-btn{background:white;color:#ff6b00;border:none;padding:7px 15px;border-radius:20px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;}
+        .install-banner-close{background:none;border:none;color:white;font-size:20px;cursor:pointer;}
+
+        /* CUSTOM CITY PICKER */
+        .city-picker-wrap{width:100%;position:relative;}
+        .city-picker-btn{width:100%;padding:11px 14px;border-radius:12px;background:var(--input-bg);color:var(--text);border:1px solid var(--border);font-family:inherit;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:border-color 0.2s;}
+        .city-picker-btn:focus,.city-picker-btn.open{border-color:var(--primary);}
+        .city-picker-arrow{font-size:11px;color:var(--sub-text);transition:transform 0.2s;}
+        .city-picker-btn.open .city-picker-arrow{transform:rotate(180deg);}
+        .city-picker-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--modal-bg);border:1px solid var(--border);border-radius:14px;z-index:1100;max-height:260px;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,0.35);display:none;}
+        .city-picker-dropdown.open{display:block;}
+        .city-picker-dropdown::-webkit-scrollbar{width:4px;}
+        .city-picker-dropdown::-webkit-scrollbar-track{background:transparent;}
+        .city-picker-dropdown::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+        .city-picker-option{padding:11px 15px;font-size:13px;cursor:pointer;color:var(--text);transition:background 0.15s;}
+        .city-picker-option:hover{background:var(--input-bg);}
+        .city-picker-option.active{color:var(--primary);font-weight:700;}
+
+        /* SHARE NAV BTN */
+        .share-nav-btn{background:var(--card-bg);border:1px solid var(--border);color:var(--text);}
+        .share-nav-btn:hover{border-color:var(--primary);color:var(--primary);}
+        .share-nav-btn:active{transform:scale(0.95);}
+
+        /* NEW BADGE */
+        .new-badge{position:absolute;top:8px;left:8px;background:white;border-radius:8px;padding:2px 7px;font-size:9px;font-weight:800;color:var(--primary);letter-spacing:0.5px;text-transform:uppercase;box-shadow:0 2px 6px rgba(0,0,0,0.2);}
+        .featured-badge{position:absolute;top:8px;right:44px;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);border-radius:8px;padding:2px 7px;font-size:9px;font-weight:800;color:#f4c430;letter-spacing:0.5px;}
+
+        /* PRICE FILTER */
+        .price-filter{display:flex;gap:6px;padding:0 15px 10px;max-width:1200px;margin:auto;}
+        .price-btn{flex:1;padding:7px 0;border-radius:10px;border:1px solid var(--border);background:var(--card-bg);color:var(--sub-text);font-size:12px;font-family:inherit;cursor:pointer;transition:all 0.2s;text-align:center;}
+        .price-btn.active{background:var(--primary-light);border-color:var(--primary);color:var(--primary);font-weight:700;}
+
+        /* SHARE MODAL */
+        .share-modal-overlay{position:fixed;inset:0;background:var(--overlay);z-index:3500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+        .share-modal-overlay.open{opacity:1;pointer-events:all;}
+        .share-modal{background:var(--modal-bg);width:100%;max-width:500px;border-radius:26px 26px 0 0;padding:24px 20px 40px;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.34,1.2,0.64,1);}
+        .share-modal-overlay.open .share-modal{transform:translateY(0);}
+        .share-modal h3{font-size:18px;font-weight:800;margin-bottom:6px;}
+        .share-modal p{font-size:12px;color:var(--sub-text);margin-bottom:20px;}
+        .share-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+        .share-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;}
+        .share-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+        .share-item span{font-size:10px;color:var(--sub-text);font-weight:600;}
+        .share-link-row{display:flex;gap:8px;align-items:center;background:var(--input-bg);border:1px solid var(--border);border-radius:12px;padding:10px 14px;}
+        .share-link-text{flex:1;font-size:11px;color:var(--sub-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .share-copy-btn{background:var(--primary);color:white;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
+        .share-close-btn{width:100%;margin-top:14px;padding:13px;background:var(--input-bg);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
+
+        /* DESKTOP FILTER SCROLLBAR */
+        .filter-row::-webkit-scrollbar{height:3px;}
+        .filter-row::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+        .category-filter::-webkit-scrollbar{height:3px;}
+        .category-filter::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+        /* ZEDBITES SCORE BADGE ON CARD */
+        .zb-score{display:inline-flex;align-items:center;gap:3px;background:linear-gradient(135deg,#ff6b00,#ff9500);color:white;border-radius:8px;padding:2px 7px;font-size:10px;font-weight:800;margin-bottom:6px;}
+
+        /* LEADERBOARD TAB */
+        .leaderboard-section{padding:20px 15px 100px;max-width:600px;margin:auto;}
+        .leaderboard-category{margin-bottom:28px;}
+        .leaderboard-title{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+        .leaderboard-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card-bg);border:1px solid var(--border);border-radius:16px;margin-bottom:8px;cursor:pointer;transition:border-color 0.2s;}
+        .leaderboard-item:active{border-color:var(--primary);}
+        .lb-rank{font-size:20px;width:32px;text-align:center;flex-shrink:0;}
+        .lb-img{width:48px;height:48px;border-radius:12px;object-fit:cover;flex-shrink:0;}
+        .lb-info{flex:1;min-width:0;}
+        .lb-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .lb-city{font-size:11px;color:var(--sub-text);}
+        .lb-score{font-size:16px;font-weight:800;color:var(--primary);flex-shrink:0;}
+
+        /* FOOD FEED TAB */
+        /* FEED TAB — fullscreen snap scroll */
+        #feedContainer{height:calc(100dvh - 132px);overflow-y:scroll;scroll-snap-type:y mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+        #feedContainer::-webkit-scrollbar{display:none;}
+        .feed-card{position:relative;width:100%;height:calc(100dvh - 132px);scroll-snap-align:start;overflow:hidden;flex-shrink:0;}
+        .feed-bg{position:absolute;inset:0;object-fit:cover;width:100%;height:100%;transition:transform 0.6s;}
+        .feed-card:active .feed-bg{transform:scale(1.02);}
+        .feed-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.1) 0%,transparent 30%,transparent 50%,rgba(0,0,0,0.85) 100%);}
+        .feed-content{position:absolute;bottom:0;left:0;right:0;padding:20px 18px 84px;}
+        @supports(padding-bottom:env(safe-area-inset-bottom)){
+            .feed-content{padding-bottom:calc(84px + env(safe-area-inset-bottom));}
+        }
+        .feed-status{margin-bottom:6px;}
+        .feed-name{font-size:24px;font-weight:800;color:white;line-height:1.15;margin-bottom:4px;letter-spacing:-0.3px;}
+        .feed-loc{font-size:13px;color:rgba(255,255,255,0.75);display:flex;align-items:center;gap:4px;margin-bottom:10px;}
+        .feed-dish-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+        .feed-dish-chip{background:rgba(255,255,255,0.18);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:4px 11px;font-size:11px;color:white;font-weight:500;}
+        .feed-actions{display:flex;gap:8px;align-items:center;}
+        .feed-cta{background:var(--primary);color:white;border:none;border-radius:50px;padding:11px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;}
+        .feed-wa{background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);color:white;border:1px solid rgba(255,255,255,0.25);border-radius:50px;padding:11px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;text-decoration:none;}
+        .feed-side{position:absolute;right:14px;bottom:100px;display:flex;flex-direction:column;gap:16px;align-items:center;}
+        @supports(bottom:env(safe-area-inset-bottom)){
+            .feed-side{bottom:calc(100px + env(safe-area-inset-bottom));}
+        }
+        .feed-side-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.2);color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-direction:column;gap:2px;}
+        .feed-side-btn span{font-size:9px;color:rgba(255,255,255,0.7);}
+        .feed-counter{position:absolute;top:14px;right:16px;background:rgba(0,0,0,0.45);backdrop-filter:blur(8px);color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;}
+        .feed-zb{position:absolute;top:14px;left:16px;background:var(--primary);color:white;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;}
+
+        /* SPIN WHEEL MODAL */
+        .wheel-overlay{position:fixed;inset:0;background:var(--overlay);z-index:3500;display:none;align-items:center;justify-content:center;}
+        .wheel-overlay.open{display:flex;}
+        .wheel-box{background:var(--modal-bg);border-radius:28px;padding:30px 24px 28px;width:92%;max-width:380px;text-align:center;}
+        .wheel-title{font-size:20px;font-weight:800;margin-bottom:6px;}
+        .wheel-sub{font-size:12px;color:var(--sub-text);margin-bottom:24px;}
+        .wheel-canvas-wrap{position:relative;width:260px;height:260px;margin:0 auto 24px;}
+        #wheelCanvas{border-radius:50%;display:block;}
+        .wheel-pointer{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:28px;line-height:1;}
+        .wheel-spin-btn{background:var(--primary);color:white;border:none;border-radius:20px;padding:13px 36px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(255,107,0,0.4);transition:transform 0.15s;}
+        .wheel-spin-btn:active{transform:scale(0.95);}
+        .wheel-result{margin-top:16px;font-size:14px;font-weight:700;color:var(--primary);min-height:22px;}
+        .wheel-close{margin-top:12px;background:none;border:none;color:var(--sub-text);font-size:12px;cursor:pointer;font-family:inherit;}
+
+            .cards{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));}
+            .img-container,.skeleton-img{height:175px;}
+            .modal{max-height:85vh;}
+            .admin-grid{grid-template-columns:1fr 1fr;}
+        }
+    </style>
+</head>
+<body>
+
+<div class="install-banner" id="installBanner">
+    <p> Add ZedBites to your home screen!</p>
+    <button class="install-banner-btn" id="installBannerBtn">Install</button>
+    <button class="install-banner-close" onclick="dismissInstallBanner()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+</div>
+
+<div id="splash">
+    <div class="splash-logo">ZedBites</div>
+    <div class="splash-tagline">Zambia's Food Guide</div>
+    <div class="splash-dots">
+        <div class="splash-dot"></div>
+        <div class="splash-dot"></div>
+        <div class="splash-dot"></div>
+    </div>
+</div>
+
+<div id="stickyHeader">
+<nav>
+    <div class="nav-top-row">
+        <div></div>
+        <h1 id="logoTap" onclick="handleLogoTap()">ZedBites</h1>
+        <div class="nav-actions">
+            <button class="nav-icon-btn install-btn" id="installNavBtn" title="Install app">
+                <i class="ph ph-download-simple" style="font-size:16px"></i>
+            </button>
+            <button class="nav-icon-btn share-nav-btn" onclick="openShareModal()" title="Share ZedBites">
+                <i class="ph ph-share-network" style="font-size:16px"></i>
+            </button>
+            <button class="nav-icon-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">
+                <i class="ph ph-moon" id="themeIcon" style="font-size:16px"></i>
+            </button>
+        </div>
+    </div>
+    <div class="nav-controls">
+        <div class="city-picker-wrap" id="cityPickerWrap">
+            <button class="city-picker-btn" id="cityPickerBtn" onclick="toggleCityPicker()">
+                <span id="cityPickerLabel">All Cities</span>
+                <span class="city-picker-arrow">▾</span>
+            </button>
+            <div class="city-picker-dropdown" id="cityPickerDropdown">
+                <div class="city-picker-option active" onclick="selectCity('all','All Cities',this)">All Cities</div>
+                <div class="city-picker-option" onclick="selectCity('Lusaka','Lusaka',this)">Lusaka</div>
+                <div class="city-picker-option" onclick="selectCity('Kitwe','Kitwe',this)">Kitwe</div>
+                <div class="city-picker-option" onclick="selectCity('Ndola','Ndola',this)">Ndola</div>
+                <div class="city-picker-option" onclick="selectCity('Livingstone','Livingstone',this)">Livingstone</div>
+                <div class="city-picker-option" onclick="selectCity('Solwezi','Solwezi',this)">Solwezi</div>
+                <div class="city-picker-option" onclick="selectCity('Kabwe','Kabwe',this)">Kabwe</div>
+                <div class="city-picker-option" onclick="selectCity('Chipata','Chipata',this)">Chipata</div>
+                <div class="city-picker-option" onclick="selectCity('Kasama','Kasama',this)">Kasama</div>
+                <div class="city-picker-option" onclick="selectCity('Mazabuka','Mazabuka',this)">Mazabuka</div>
+                <div class="city-picker-option" onclick="selectCity('Chingola','Chingola',this)">Chingola</div>
+                <div class="city-picker-option" onclick="selectCity('Mufulira','Mufulira',this)">Mufulira</div>
+                <div class="city-picker-option" onclick="selectCity('Choma','Choma',this)">Choma</div>
+                <div class="city-picker-option" onclick="selectCity('Mongu','Mongu',this)">Mongu</div>
+            </div>
+        </div>
+        <input type="hidden" id="citySelect" value="all">
+        <div class="search-wrap">
+            <input type="text" id="searchInput" placeholder="Search restaurants..." oninput="handleSearch()">
+            <button class="search-clear" id="searchClear" onclick="clearSearch()">
+                <i class="ph ph-x" style="font-size:13px"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<div class="tab-bar" id="tabBar">
+    <button class="tab-btn active" onclick="switchTab('list',this)">Browse</button>
+    <button class="tab-btn" onclick="switchTab('feed',this)">Feed</button>
+    <button class="tab-btn" onclick="switchTab('admin',this)" id="adminTabBtn" style="display:none">Dashboard</button>
+</div>
+</div>
+
+<!-- LIST TAB -->
+<div id="tabList">
+    <div id="greetingBanner" style="padding:22px 20px 6px;max-width:1200px;margin:auto;text-align:center;">
+        <h2 id="greetingTitle" style="font-size:24px;color:var(--primary);font-weight:800;"></h2>
+        <p id="greetingSubtitle" style="font-size:12px;color:var(--sub-text);margin-top:4px;"></p>
+    </div>
+    <div class="new-section" id="newlyAddedSection" style="display:none;">
+        <div class="new-section-head">
+            <i class="ph ph-clock-counter-clockwise" style="font-size:13px;color:var(--primary)"></i>
+            <span class="new-section-title">Recently Added</span>
+        </div>
+        <div class="new-scroll" id="newlyAddedScroll"></div>
+    </div>
+    <div style="padding:8px 0 0;"></div>
+    <div class="category-filter">
+        <button class="cat-btn active" onclick="setCategory('all',this)">
+            <i class="ph ph-compass"></i>
+            <span class="cat-label">All</span>
+        </button>
+        <button class="cat-btn" onclick="setCategory('fastfood',this)">
+            <i class="ph ph-hamburger"></i>
+            <span class="cat-label">Fast Food</span>
+        </button>
+        <button class="cat-btn" onclick="setCategory('local',this)">
+            <i class="ph ph-cooking-pot"></i>
+            <span class="cat-label">Local</span>
+        </button>
+        <button class="cat-btn" onclick="setCategory('fine',this)">
+            <i class="ph ph-fork-knife"></i>
+            <span class="cat-label">Fine Dining</span>
+        </button>
+        <button class="cat-btn" onclick="setCategory('cafe',this)">
+            <i class="ph ph-coffee"></i>
+            <span class="cat-label">Café</span>
+        </button>
+    </div>
+    <div class="price-filter" id="priceFilter">
+        <button class="price-btn active" onclick="setPrice('all',this)">All Types</button>
+        <button class="price-btn" onclick="setPrice('budget',this)">Budget</button>
+        <button class="price-btn" onclick="setPrice('mid',this)">Mid-range</button>
+        <button class="price-btn" onclick="setPrice('fine',this)">Fine dining</button>
+    </div>
+    <div class="filter-row">
+        <label class="open-now-pill" id="openNowPill" for="openToggle">
+            <input type="checkbox" id="openToggle" onchange="filterData();syncOpenNowPill()">
+            <span class="slider"></span>
+            <span class="open-now-text">Open Now</span>
+        </label>
+        <button class="filter-row-btn" id="favFilterBtn" onclick="toggleFavFilter()">
+            <i class="ph ph-heart" style="font-size:12px"></i>
+            <span class="btn-label">Favourites</span>
+        </button>
+        <button class="filter-row-btn" id="visitedFilterBtn" onclick="toggleVisitedFilter()">
+            <i class="ph ph-check-circle" style="font-size:12px"></i>
+            <span class="btn-label">Visited</span>
+        </button>
+        <div class="filter-divider"></div>
+        <button class="sort-chip active" onclick="setSort('default',this)">Featured</button>
+        <button class="sort-chip" onclick="setSort('open',this)">Open First</button>
+        <button class="sort-chip" onclick="setSort('az',this)">A–Z</button>
+        <button class="sort-chip" onclick="setSort('rating',this)">Top Rated</button>
+        <button class="sort-chip" onclick="setSort('closing',this)">Closing Soon</button>
+    </div>
+    <div class="result-bar" style="display:flex;align-items:center;justify-content:space-between;padding:10px 15px 0;max-width:1200px;margin:auto;">
+        <p class="result-count" id="resultCount"></p>
+        <button id="clearFiltersBtn" onclick="clearAllFilters()" style="display:none;background:none;border:none;color:var(--primary);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;padding:0;">Clear filters</button>
+    </div>
+    <div class="recent-section" id="recentSection" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <h4 style="margin-bottom:0;">Recently Viewed</h4>
+            <button onclick="clearRecentlyViewed()" style="background:none;border:none;color:var(--sub-text);font-size:11px;cursor:pointer;font-family:inherit;">Clear</button>
+        </div>
+        <div class="recent-scroll" id="recentScroll"></div>
+    </div>
+    <section class="section">
+        <div class="cards" id="restaurantCards"></div>
+    </section>
+</div>
+
+
+
+<!-- ADMIN TAB -->
+<div id="tabAdmin" style="display:none">
+    <div class="admin-section" id="adminContent"></div>
+</div>
+
+<!-- FEED TAB -->
+<div id="tabFeed" style="display:none">
+    <div id="feedContainer"></div>
+</div>
+
+<!-- LEADERBOARD TAB -->
+<div id="tabLeaderboard" style="display:none">
+    <div class="leaderboard-section" id="leaderboardContent"></div>
+</div>
+
+<!-- SPIN WHEEL MODAL -->
+<div class="wheel-overlay" id="wheelOverlay">
+    <div class="wheel-box">
+        <div class="wheel-title">What should I eat?</div>
+        <div class="wheel-sub">Spin the wheel and let ZedBites decide</div>
+        <div class="wheel-canvas-wrap">
+            <div class="wheel-pointer">▼</div>
+            <canvas id="wheelCanvas" width="260" height="260"></canvas>
+        </div>
+        <button class="wheel-spin-btn" id="wheelSpinBtn" onclick="spinWheel()">Spin!</button>
+        <div class="wheel-result" id="wheelResult"></div>
+        <button class="wheel-close" onclick="closeWheelModal()">Close</button>
+    </div>
+</div>
+
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+<button class="surprise-fab" onclick="openWheelModal()" title="Spin the Wheel"><i class="ph ph-shuffle" style="font-size:22px;color:white;"></i></button>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+    <div class="modal" id="modal">
+        <div class="modal-top-bar">
+            <button class="modal-close-btn" onclick="closeModal()"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            <span class="modal-nav-counter" id="modalNavCounter"></span>
+            <div class="modal-nav-arrows">
+                <button class="modal-nav-arrow" id="modalPrevBtn" onclick="navigateModal(-1)">‹</button>
+                <button class="modal-nav-arrow" id="modalNextBtn" onclick="navigateModal(1)">›</button>
+            </div>
+        </div>
+        <img src="" alt="" class="modal-img" id="modalImg" loading="lazy">
+        <div class="modal-body">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <button class="modal-fav-btn" id="modalFavBtn" onclick="toggleFavFromModal()"><i class="ph ph-heart" style="font-size:20px;color:var(--sub-text);"></i></button>
+            </div>
+            <p class="modal-location" id="modalLocation"></p>
+            <p class="modal-city" id="modalCity"></p>
+            <div class="modal-tags" id="modalTags"></div>
+            <div class="modal-info-grid" id="modalInfoGrid"></div>
+            <div class="modal-dishes">
+                <h4>Popular Dishes</h4>
+                <div class="dish-list" id="dishList"></div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <a href="#" class="modal-btn modal-btn-call" id="modalCallBtn"><i class="ph ph-phone" style="font-size:14px"></i> Call</a>
+            <a href="#" class="modal-btn modal-btn-wa" id="modalWaBtn"><i class="ph ph-chat-circle" style="font-size:14px"></i> WhatsApp</a>
+            <a href="#" class="modal-btn modal-btn-maps" id="modalMapsBtn" target="_blank"><i class="ph ph-map-pin" style="font-size:14px"></i> Maps</a>
+            <button class="modal-btn modal-share-btn" onclick="shareRestaurant()"><i class="ph ph-share-network" style="font-size:14px"></i> Share</button>
+            <button class="modal-btn modal-visit-btn" id="modalVisitBtn" onclick="toggleVisited()" style="grid-column:1/-1"><i class="ph ph-check-circle" id="visitIcon" style="font-size:14px"></i> <span id="visitLabel">Mark as Visited</span></button>
+            <button class="modal-btn modal-suggest-btn" onclick="suggestEdit()" style="grid-column:1/-1;background:none;border:1px solid var(--border);color:var(--sub-text);font-size:11px;"><i class="ph ph-pencil-simple" style="font-size:12px"></i> Suggest an edit</button>
+        </div>
+        <div class="rating-section" id="ratingSection">
+            <h4>Ratings & Reviews</h4>
+            <div class="rating-summary" id="ratingSummary"></div>
+            <div class="user-rating">
+                <p>Tap to rate:</p>
+                <div class="star-picker" id="starPicker">
+                    <button class="star-pick" onclick="pickStar(1)">★</button>
+                    <button class="star-pick" onclick="pickStar(2)">★</button>
+                    <button class="star-pick" onclick="pickStar(3)">★</button>
+                    <button class="star-pick" onclick="pickStar(4)">★</button>
+                    <button class="star-pick" onclick="pickStar(5)">★</button>
+                </div>
+            </div>
+            <div class="review-input-row">
+                <input class="review-input" id="reviewInput" placeholder="Leave a comment (optional)..." type="text">
+                <button class="review-submit" onclick="submitReview()">Post</button>
+            </div>
+            <div class="reviews-list" id="reviewsList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ADD PANEL -->
+<button class="add-fab" id="addFab" onclick="openAddPanel()" style="display:none">
+    <i class="ph ph-plus" style="font-size:18px"></i>
+</button>
+<div class="add-overlay" id="addOverlay" onclick="handleAddOverlayClick(event)">
+    <div class="add-panel" id="addPanel">
+        <div class="add-panel-handle-row">
+            <div class="add-panel-handle"></div>
+            <button class="add-panel-close" onclick="closeAddPanel()">
+                <i class="ph ph-x" style="font-size:15px"></i>
+            </button>
+        </div>
+        <div class="add-panel-body">
+            <p class="add-panel-title">Add Restaurant</p>
+            <p class="add-panel-sub">Saves to cloud — visible to everyone instantly.</p>
+            <input type="hidden" id="f-edit-id" value="">
+            <div class="form-group">
+                <label class="form-label">Restaurant Name *</label>
+                <input class="form-input" id="f-name" placeholder="e.g. Mama's Kitchen" type="text">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Category *</label>
+                <div class="cat-picker">
+                    <button class="cat-pick-btn" onclick="pickCat('fine',this)">Fine Dining</button>
+                    <button class="cat-pick-btn" onclick="pickCat('fastfood',this)">Fast Food</button>
+                    <button class="cat-pick-btn" onclick="pickCat('local',this)">Local</button>
+                    <button class="cat-pick-btn" onclick="pickCat('cafe',this)">Café</button>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">City *</label>
+                    <select class="form-select" id="f-city">
+                        <option value="">Select city</option>
+                        <option>Lusaka</option><option>Kitwe</option><option>Ndola</option>
+                        <option>Livingstone</option><option>Solwezi</option><option>Kabwe</option>
+                        <option>Chipata</option><option>Kasama</option><option>Mazabuka</option>
+                        <option>Chingola</option><option>Mufulira</option><option>Choma</option><option>Mongu</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone *</label>
+                    <input class="form-input" id="f-phone" placeholder="+260977..." type="tel">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Location / Area *</label>
+                <input class="form-input" id="f-location" placeholder="e.g. Manda Hill Mall" type="text">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Opening Time</label>
+                <div class="hour-picker">
+                    <input type="range" min="0" max="23" value="9" id="f-open" oninput="updateHourDisplay('f-open','f-open-display')">
+                    <span class="hour-display" id="f-open-display">9:00 AM</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Closing Time</label>
+                <div class="hour-picker">
+                    <input type="range" min="0" max="23" value="21" id="f-close" oninput="updateHourDisplay('f-close','f-close-display')">
+                    <span class="hour-display" id="f-close-display">9:00 PM</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Popular Dishes (comma separated)</label>
+                <input class="form-input" id="f-dishes" placeholder="e.g. Nshima, Grilled Chicken, Juice" type="text">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Photo URL (optional)</label>
+                <input class="form-input" id="f-image" placeholder="Paste an image link..." type="url" oninput="previewImage()">
+                <p class="form-hint">Tip: find a photo on <a href="https://unsplash.com" target="_blank" style="color:var(--primary)">unsplash.com</a>, right-click → copy image address</p>
+                <img class="img-preview" id="f-img-preview" alt="Preview">
+            </div>
+            <button class="add-submit-btn" id="addSubmitBtn" onclick="submitRestaurant()">Save Restaurant</button>
+            <div class="added-list-section" id="addedListSection" style="display:none">
+                <p class="added-list-title">Your Added Restaurants</p>
+                <div id="addedList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="share-modal-overlay" id="shareModalOverlay" onclick="if(event.target===this)closeShareModal()">
+    <div class="share-modal">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <h3>Share ZedBites</h3>
+            <button onclick="closeShareModal()" style="background:none;border:none;color:var(--sub-text);cursor:pointer;display:flex;align-items:center;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <p>Help your friends find the best spots in Zambia!</p>
+        <div class="share-grid">
+            <div class="share-item" onclick="shareVia('whatsapp')">
+                <div class="share-icon" style="background:#25D366">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                </div>
+                <span>WhatsApp</span>
+            </div>
+            <div class="share-item" onclick="shareVia('facebook')">
+                <div class="share-icon" style="background:#1877F2">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </div>
+                <span>Facebook</span>
+            </div>
+            <div class="share-item" onclick="shareVia('twitter')">
+                <div class="share-icon" style="background:#000">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </div>
+                <span>X</span>
+            </div>
+            <div class="share-item" onclick="shareVia('native')">
+                <div class="share-icon" style="background:var(--input-bg);border:1px solid var(--border)">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </div>
+                <span>More</span>
+            </div>
+        </div>
+        <div class="share-link-row">
+            <span class="share-link-text" id="shareLinkText">https://zedbites.app</span>
+            <button class="share-copy-btn" onclick="copyShareLink()">Copy Link</button>
+        </div>
+    </div>
+</div>
+
+<!-- PUBLIC SUBMIT MODAL -->
+<div class="add-overlay" id="publicSubmitOverlay" onclick="if(event.target===this)closePublicSubmit()">
+    <div class="add-panel" id="publicSubmitPanel">
+        <div class="add-panel-handle-row">
+            <div class="add-panel-handle"></div>
+            <button class="add-panel-close" onclick="closePublicSubmit()"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="add-panel-body">
+            <p class="add-panel-title">Suggest a Restaurant</p>
+            <p class="add-panel-sub">Know a great spot we're missing? Tell us about it and we'll add it.</p>
+            <div class="form-group">
+                <label class="form-label">Restaurant Name *</label>
+                <input class="form-input" id="ps-name" placeholder="e.g. Mama's Kitchen" type="text">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">City *</label>
+                    <select class="form-select" id="ps-city">
+                        <option value="">Select city</option>
+                        <option>Lusaka</option><option>Kitwe</option><option>Ndola</option>
+                        <option>Livingstone</option><option>Solwezi</option><option>Kabwe</option>
+                        <option>Chipata</option><option>Kasama</option><option>Mazabuka</option>
+                        <option>Chingola</option><option>Mufulira</option><option>Choma</option><option>Mongu</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone *</label>
+                    <input class="form-input" id="ps-phone" placeholder="+260977..." type="tel">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Location / Area *</label>
+                <input class="form-input" id="ps-location" placeholder="e.g. Manda Hill Mall" type="text">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Category *</label>
+                <div class="cat-picker">
+                    <button class="cat-pick-btn" onclick="pickPublicCat('fine',this)">Fine Dining</button>
+                    <button class="cat-pick-btn" onclick="pickPublicCat('fastfood',this)">Fast Food</button>
+                    <button class="cat-pick-btn" onclick="pickPublicCat('local',this)">Local</button>
+                    <button class="cat-pick-btn" onclick="pickPublicCat('cafe',this)">Café</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Any extra info (optional)</label>
+                <input class="form-input" id="ps-note" placeholder="Opening hours, popular dishes, etc." type="text">
+            </div>
+            <button class="add-submit-btn" onclick="submitPublicForm()">Submit for Review</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<footer>
+    <p style="font-size:15px;font-weight:800;color:var(--primary);letter-spacing:1px;margin-bottom:12px;">ZedBites</p>
+    <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;">
+        <a href="https://wa.me/260779223648?text=Hi%20ZedBites!%20Tell%20me%20more%20about%20you." target="_blank" style="font-size:12px;color:var(--sub-text);text-decoration:none;">About</a>
+        <a href="https://wa.me/260779223648?text=Hi%20ZedBites!%20I%20have%20a%20question." target="_blank" style="font-size:12px;color:var(--sub-text);text-decoration:none;">Contact</a>
+        <a href="#" onclick="openPublicSubmit();return false;" style="font-size:12px;color:var(--sub-text);text-decoration:none;">Submit a Restaurant</a>
+    </div>
+    <p style="font-size:10px;color:var(--sub-text);letter-spacing:2px;text-transform:uppercase;">© 2026 ZEDBITES · Zambia's Food Guide</p>
+</footer>
+
+<!-- FIREBASE -->
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getFirestore,collection,addDoc,deleteDoc,doc,onSnapshot,query,orderBy,updateDoc,setDoc,getDoc,getDocs}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import{getAuth,signInWithEmailAndPassword,signInAnonymously,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const OWNER_UID='8nLjBbvyVHTfXbWbJSFJolHYJsC3';
+
+const app=initializeApp({apiKey:"AIzaSyBmfQNJLKuR6o8TUWI1fuRSkMNs04J1V3w",authDomain:"zedbites-a7582.firebaseapp.com",projectId:"zedbites-a7582",storageBucket:"zedbites-a7582.firebasestorage.app",messagingSenderId:"488427040460",appId:"1:488427040460:web:4806bfb6bd2d5c71065c69"});
+const db=getFirestore(app);
+const auth=getAuth(app);
+
+// ── AUTH ──────────────────────────────────────────────────────
+// When owner unlocks via PIN, silently sign them into Firebase too
+window.firebaseSignIn=async(email,password)=>{
+    try{
+        await signInWithEmailAndPassword(auth,email,password);
+        return true;
+    }catch(e){
+        console.warn('Firebase sign-in failed:',e.message);
+        return false;
+    }
+};
+
+onAuthStateChanged(auth,user=>{
+    window._fbUser=user||null;
+    window._isFirebaseOwner=user&&user.uid===OWNER_UID;
+    // Auto sign-in anonymously so ratings/submissions pass Firestore rules
+    if(!user){
+        signInAnonymously(auth).catch(e=>console.warn('Anon sign-in failed:',e.message));
+    }
+});
+
+// ── RESTAURANTS ───────────────────────────────────────────────
+const col=collection(db,'restaurants');
+onSnapshot(query(col,orderBy('createdAt','desc')),(snapshot)=>{
+    window._fbIds=window._fbIds||[];
+    window._fbIds.forEach(fid=>{const i=restaurants.findIndex(r=>r.firebaseId===fid);if(i>-1)restaurants.splice(i,1);});
+    window._fbIds=[];
+    snapshot.forEach(d=>{if(!restaurants.find(r=>r.firebaseId===d.id)){restaurants.push({...d.data(),firebaseId:d.id,id:d.id});window._fbIds.push(d.id);}});
+    renderAddedList();filterData();renderNewlyAdded();
+});
+const isOwnerAuth=()=>window._isFirebaseOwner||localStorage.getItem('zedbites-owner')==='true';
+
+window.saveToFirebase=async r=>{
+    if(!isOwnerAuth()){showToast('⚠️ Not authorised');return null;}
+    try{const ref=await addDoc(col,{...r,createdAt:Date.now()});return ref.id;}catch(e){showToast('⚠️ Cloud save failed: '+e.message);return null;}
+};
+window.deleteFromFirebase=async fid=>{
+    if(!isOwnerAuth()){showToast('⚠️ Not authorised');return;}
+    try{await deleteDoc(doc(db,'restaurants',fid));}catch(e){showToast('⚠️ Cloud delete failed: '+e.message);}
+};
+window.updateInFirebase=async(fid,data)=>{
+    if(!isOwnerAuth()){showToast('⚠️ Not authorised');return;}
+    try{await updateDoc(doc(db,'restaurants',fid),data);}catch(e){showToast('⚠️ Cloud update failed: '+e.message);}
+};
+
+// ── RATINGS ───────────────────────────────────────────────────
+const ratingsCol=collection(db,'ratings');
+onSnapshot(ratingsCol,(snapshot)=>{
+    snapshot.forEach(d=>{
+        const data=d.data();
+        if(data.restaurantId){
+            if(!ratings[data.restaurantId])ratings[data.restaurantId]=[];
+            if(!ratings[data.restaurantId].find(r=>r.fbId===d.id)){
+                ratings[data.restaurantId].push({fbId:d.id,stars:data.stars,comment:data.comment||'',date:data.date});
+            }
+        }
+    });
+    if(window.currentModalId)renderRatingSection(window.currentModalId);
+    filterData();
+});
+window.saveRatingToFirebase=async(restaurantId,stars,comment)=>{
+    // Wait up to 4s for anonymous auth to be ready
+    if(!window._fbUser){
+        await new Promise(res=>{
+            let tries=0;
+            const wait=setInterval(()=>{if(window._fbUser||++tries>8){clearInterval(wait);res();}},500);
+        });
+    }
+    try{
+        await addDoc(ratingsCol,{restaurantId,stars,comment:comment||'',date:new Date().toLocaleDateString(),createdAt:Date.now()});
+        return true;
+    }catch(e){showToast('⚠️ Rating save failed');return false;}
+};
+
+// ── SUBMISSIONS ───────────────────────────────────────────────
+const subCol=collection(db,'submissions');
+window.submitToFirebase=async(data)=>{
+    // Wait up to 4s for anonymous auth to be ready
+    if(!window._fbUser){
+        await new Promise(res=>{
+            let tries=0;
+            const wait=setInterval(()=>{if(window._fbUser||++tries>8){clearInterval(wait);res();}},500);
+        });
+    }
+    try{await addDoc(subCol,{...data,status:'pending',createdAt:Date.now()});return true;}
+    catch(e){showToast('⚠️ Submission failed');return false;}
+};
+onSnapshot(query(subCol,orderBy('createdAt','desc')),(snapshot)=>{
+    const pending=[];
+    snapshot.forEach(d=>pending.push({fbId:d.id,...d.data()}));
+    window._pendingSubmissions=pending;
+    const adminTab=document.getElementById('tabAdmin');
+    if(adminTab&&adminTab.style.display!=='none')renderAdminDashboard();
+});
+window.approveSubmission=async(sub)=>{
+    if(!isOwnerAuth()){showToast('⚠️ Not authorised');return;}
+    try{
+        await addDoc(col,{name:sub.name,city:sub.city,category:sub.category,location:sub.location,phone:sub.phone,open:sub.open||9,close:sub.close||21,dishes:sub.dishes||['Local Favourite'],image:sub.image||'https://images.unsplash.com/photo-1567620985032-074b46254ffb?w=400',custom:true,createdAt:Date.now()});
+        await deleteDoc(doc(db,'submissions',sub.fbId));
+        showToast('Restaurant approved!');
+    }catch(e){showToast('⚠️ Approval failed: '+e.message);}
+};
+window.rejectSubmission=async(fbId)=>{
+    if(!isOwnerAuth()){showToast('⚠️ Not authorised');return;}
+    try{await deleteDoc(doc(db,'submissions',fbId));showToast('Submission rejected');}
+    catch(e){showToast('⚠️ Rejection failed');}
+};
+</script>
+
+<script>
+// PWA
+let deferredPrompt=null;
+const mData={name:"ZedBites",short_name:"ZedBites",description:"Zambia's Food Guide",start_url:".",display:"standalone",background_color:"#0a0a0a",theme_color:"#ff6b00",icons:[{src:"https://via.placeholder.com/192x192/ff6b00/ffffff?text=ZB",sizes:"192x192",type:"image/png"}]};
+document.getElementById('manifestLink').href=URL.createObjectURL(new Blob([JSON.stringify(mData)],{type:'application/json'}));
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('installNavBtn').classList.add('visible');document.getElementById('installBanner').classList.add('visible');});
+window.addEventListener('appinstalled',()=>{document.getElementById('installNavBtn').classList.remove('visible');document.getElementById('installBanner').classList.remove('visible');showToast('ZedBites installed!');});
+async function triggerInstall(){if(!deferredPrompt){showToast('Use browser menu → Add to Home Screen');return;}deferredPrompt.prompt();deferredPrompt=null;}
+document.getElementById('installNavBtn').addEventListener('click',triggerInstall);
+document.getElementById('installBannerBtn').addEventListener('click',triggerInstall);
+function dismissInstallBanner(){document.getElementById('installBanner').classList.remove('visible');}
+
+// CUSTOM CITY PICKER
+function toggleCityPicker(){
+    const btn=document.getElementById('cityPickerBtn');
+    const dd=document.getElementById('cityPickerDropdown');
+    const isOpen=dd.classList.contains('open');
+    dd.classList.toggle('open',!isOpen);
+    btn.classList.toggle('open',!isOpen);
+}
+function selectCity(value,label,el){
+    document.getElementById('citySelect').value=value;
+    document.getElementById('cityPickerLabel').innerText=label;
+    document.getElementById('cityPickerBtn').classList.remove('open');
+    document.getElementById('cityPickerDropdown').classList.remove('open');
+    document.querySelectorAll('.city-picker-option').forEach(o=>o.classList.remove('active'));
+    el.classList.add('active');
+    handleCityChange();
+}
+document.addEventListener('click',e=>{
+    const wrap=document.getElementById('cityPickerWrap');
+    if(wrap&&!wrap.contains(e.target)){
+        document.getElementById('cityPickerBtn').classList.remove('open');
+        document.getElementById('cityPickerDropdown').classList.remove('open');
+    }
+});
+
+// PRICE FILTER
+let currentPrice='all';
+const priceMap={budget:['fastfood','cafe'],mid:['local','cafe','fastfood'],fine:['fine']};
+function setPrice(p,btn){
+    currentPrice=p;
+    document.querySelectorAll('.price-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    filterData();
+}
+
+// SHARE MODAL
+function openShareModal(){document.getElementById('shareModalOverlay').classList.add('open');document.body.style.overflow='hidden';}
+function closeShareModal(){document.getElementById('shareModalOverlay').classList.remove('open');document.body.style.overflow='';}
+function shareVia(platform){
+    const url=window.location.href;
+    const urlEnc=encodeURIComponent(url);
+    const text=encodeURIComponent("Check out ZedBites – Zambia's Food Guide! Find the best restaurants near you.");
+    if(platform==='whatsapp'){window.open(`https://wa.me/?text=${text}%20${urlEnc}`,'_blank');}
+    else if(platform==='facebook'){window.open(`https://www.facebook.com/sharer/sharer.php?u=${urlEnc}`,'_blank');}
+    else if(platform==='twitter'){window.open(`https://twitter.com/intent/tweet?text=${text}&url=${urlEnc}`,'_blank');}
+    else if(platform==='native'){
+        if(navigator.share){navigator.share({title:'ZedBites',text:"Zambia's Food Guide",url}).catch(()=>{});}
+        else{navigator.clipboard.writeText(url).then(()=>showToast('Link copied to clipboard')).catch(()=>showToast('Copy this link: '+url));}
+    }
+    if(platform!=='native')closeShareModal();
+}
+function copyShareLink(){
+    navigator.clipboard.writeText(window.location.href).then(()=>showToast('Link copied!')).catch(()=>showToast('Copy link manually'));
+}
+
+
+function toggleTheme(){document.body.classList.toggle('light-mode');const l=document.body.classList.contains('light-mode');localStorage.setItem('zedbites-theme',l?'light':'dark');const icon=document.getElementById('themeIcon');if(icon){icon.className=l?'ph ph-sun':'ph ph-moon';icon.style.fontSize='16px';}}
+window.addEventListener('DOMContentLoaded',()=>{
+    if(localStorage.getItem('zedbites-theme')==='light'){document.body.classList.add('light-mode');document.getElementById('themeBtn').innerText='☀️';}
+    const sc=localStorage.getItem('zedbites-city');
+    if(sc&&sc!=='all'){
+        document.getElementById('citySelect').value=sc;
+        const opt=document.querySelector(`.city-picker-option[onclick*="'${sc}'"]`);
+        if(opt){document.querySelectorAll('.city-picker-option').forEach(o=>o.classList.remove('active'));opt.classList.add('active');document.getElementById('cityPickerLabel').innerText=opt.innerText;}
+    }
+});
+
+// SPLASH
+window.onload=()=>{
+    mergeCustom();checkOwnerMode();updateGreeting();renderRecentlyViewed();renderNewlyAdded();
+    filterData();updateTabBarTop();
+    // Hide splash
+    const splash=document.getElementById('splash');
+    if(splash){
+        const visited=localStorage.getItem('zedbites-visited-site');
+        if(visited){splash.style.display='none';}
+        else{setTimeout(()=>{splash.style.opacity='0';setTimeout(()=>{splash.style.display='none';localStorage.setItem('zedbites-visited-site','1');},600);},1200);}
+    }
+};
+function switchTab(tab,btn){
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+    document.getElementById('tabList').style.display=tab==='list'?'block':'none';
+    document.getElementById('tabAdmin').style.display=tab==='admin'?'block':'none';
+    document.getElementById('tabFeed').style.display=tab==='feed'?'block':'none';
+    if(tab==='admin')renderAdminDashboard();
+    if(tab==='feed')renderFeed();
+}
+
+// DATA
+const restaurants=[
+    {id:1,city:"Lusaka",name:"Chuma Grill",category:"fine",location:"Radisson Blu",phone:"+260211368900",image:"https://images.unsplash.com/photo-1544025162-d76694265947?w=400",open:12,close:22,dishes:["Grilled Tilapia","Nyama Choma","Sadza Platter"]},
+    {id:2,city:"Lusaka",name:"Piatto Restaurants",category:"fastfood",location:"East Park Mall",phone:"+260211846465",image:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400",open:9,close:22,dishes:["Pizza Margherita","Pasta Arrabbiata","Garlic Bread"]},
+    {id:3,city:"Lusaka",name:"Mint Lounge",category:"cafe",location:"Acacia Park",phone:"+260766792122",image:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",open:7,close:19,dishes:["Flat White","Avocado Toast","Banana Bread"]},
+    {id:4,city:"Lusaka",name:"Matebeto Olympia",category:"local",location:"Olympia Park",phone:"+260970000005",image:"https://images.unsplash.com/photo-1567620985032-074b46254ffb?w=400",open:8,close:21,dishes:["Nshima & Kapenta","Ifisashi","Village Chicken"]},
+    {id:5,city:"Lusaka",name:"Hussar Grill",category:"fine",location:"East Park Mall",phone:"+260211375800",image:"https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400",open:11,close:22,dishes:["Fillet Steak","Lamb Chops","Crème Brûlée"]},
+    {id:6,city:"Lusaka",name:"Sugarbush Cafe",category:"cafe",location:"Leopards Hill Rd",phone:"+260977823456",image:"https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400",open:8,close:17,dishes:["English Breakfast","Scones","Cappuccino"]},
+    {id:7,city:"Lusaka",name:"Rhapsodys",category:"fine",location:"Showgrounds",phone:"+260977712345",image:"https://images.unsplash.com/photo-1550966842-28c466461c21?w=400",open:11,close:23,dishes:["Seafood Platter","Beef Tenderloin","Tiramisu"]},
+    {id:8,city:"Lusaka",name:"Dil Restaurant",category:"fine",location:"Rhodes Park",phone:"+260211250000",image:"https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400",open:12,close:21,dishes:["Butter Chicken","Biryani","Garlic Naan"]},
+    {id:9,city:"Lusaka",name:"Portico",category:"fine",location:"Showgrounds",phone:"+260977712344",image:"https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400",open:11,close:23,dishes:["Grilled Lobster","Duck Confit","Chocolate Fondant"]},
+    {id:10,city:"Lusaka",name:"Gigibonta",category:"cafe",location:"Manda Hill Mall",phone:"+260966123456",image:"https://images.unsplash.com/photo-1501339817302-444d3ad072f?w=400",open:9,close:21,dishes:["Waffles","Smoothie Bowl","Iced Latte"]},
+    {id:22,city:"Lusaka",name:"Ocean Basket",category:"fine",location:"Manda Hill Mall",phone:"+260211367000",image:"https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=400",open:10,close:22,dishes:["Calamari","Grilled Prawns","Fish & Chips"]},
+    {id:23,city:"Lusaka",name:"Nando's Lusaka",category:"fastfood",location:"Levy Junction Mall",phone:"+260211253000",image:"https://images.unsplash.com/photo-1598103442097-8b74394b95c2?w=400",open:9,close:22,dishes:["PERi-PERi Chicken","Fino Rolls","Corn on the Cob"]},
+    {id:24,city:"Lusaka",name:"Wimpy Manda Hill",category:"fastfood",location:"Manda Hill Mall",phone:"+260211367100",image:"https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400",open:8,close:21,dishes:["Classic Burger","Breakfast Platter","Milkshake"]},
+    {id:25,city:"Lusaka",name:"The Polo Grill",category:"fine",location:"Lusaka South",phone:"+260977900000",image:"https://images.unsplash.com/photo-1544148103-0773bf10d330?w=400",open:12,close:22,dishes:["T-Bone Steak","Rack of Lamb","Crème Brûlée"]},
+    {id:11,city:"Kitwe",name:"Mukuba Grill",category:"fine",location:"Mukuba Mall",phone:"+260212220333",image:"https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400",open:10,close:22,dishes:["Grilled Chicken","Beef Ribs","Chips & Dip"]},
+    {id:12,city:"Kitwe",name:"The Copper Pot",category:"local",location:"Parklands, Kitwe",phone:"+260966000000",image:"https://images.unsplash.com/photo-1541529086526-db283c563270?w=400",open:8,close:20,dishes:["Nshima","Bream Fish","Ifinkubala"]},
+    {id:13,city:"Kitwe",name:"Sherbourne Hotel",category:"fine",location:"Parklands, Kitwe",phone:"+260212220000",image:"https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400",open:11,close:22,dishes:["Club Sandwich","Caesar Salad","Beef Burger"]},
+    {id:26,city:"Kitwe",name:"Eat & Drink Kitwe",category:"fastfood",location:"Kitwe CBD",phone:"+260966100100",image:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400",open:9,close:21,dishes:["Loaded Burger","Chicken Wrap","Loaded Fries"]},
+    {id:27,city:"Kitwe",name:"Copperbelt Café",category:"cafe",location:"Nkana East",phone:"+260966200200",image:"https://images.unsplash.com/photo-1442975631115-c4f7b05b8a2c?w=400",open:7,close:18,dishes:["Espresso","Toasted Sandwich","Carrot Cake"]},
+    {id:14,city:"Ndola",name:"Michelangelo",category:"fine",location:"Broadway, Ndola",phone:"+260212610000",image:"https://images.unsplash.com/photo-1544148103-0773bf10d330?w=400",open:11,close:22,dishes:["Spaghetti Carbonara","Osso Buco","Panna Cotta"]},
+    {id:15,city:"Ndola",name:"Kansenshi Cafe",category:"cafe",location:"Kansenshi, Ndola",phone:"+260955000000",image:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",open:7,close:18,dishes:["Pancakes","Omelette","Fresh Juice"]},
+    {id:16,city:"Ndola",name:"The Urban Restaurant",category:"fine",location:"Ndola CBD",phone:"+260212620000",image:"https://images.unsplash.com/photo-1550966842-28c466461c21?w=400",open:10,close:23,dishes:["Grilled Salmon","Mushroom Risotto","Cheesecake"]},
+    {id:28,city:"Ndola",name:"Savanna Grill Ndola",category:"fine",location:"Itawa, Ndola",phone:"+260212630000",image:"https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400",open:11,close:22,dishes:["Game Meat","Grilled Ribs","Braai Platter"]},
+    {id:29,city:"Ndola",name:"Mama Afrika Kitchen",category:"local",location:"Masala, Ndola",phone:"+260955100100",image:"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400",open:8,close:20,dishes:["Nshima & Chicken","Ifisashi","Samp & Beans"]},
+    {id:17,city:"Livingstone",name:"Elephant Cafe",category:"fine",location:"Nakatindi Rd",phone:"+260977123123",image:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400",open:11,close:21,dishes:["Crocodile Tail","Game Meat Platter","Mango Sorbet"]},
+    {id:18,city:"Livingstone",name:"Golden Leaf",category:"fine",location:"Mosi-O-Tunya Rd",phone:"+260213320000",image:"https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400",open:12,close:22,dishes:["Roast Duck","Beef Wellington","Lemon Tart"]},
+    {id:19,city:"Livingstone",name:"Kubu Cafe",category:"cafe",location:"Falls Park Mall",phone:"+260213321111",image:"https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=400",open:8,close:18,dishes:["Victoria Sandwich","Fruit Salad","Chai Latte"]},
+    {id:30,city:"Livingstone",name:"The Zambezi Deck",category:"fine",location:"Waterfront",phone:"+260213320500",image:"https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400",open:10,close:22,dishes:["Zambezi Tiger Fish","Crocodile Kebab","Sunset Cocktail"]},
+    {id:31,city:"Livingstone",name:"Cafe Zambezi",category:"cafe",location:"Mosi-O-Tunya Rd",phone:"+260213322000",image:"https://images.unsplash.com/photo-1501339817302-444d3ad072f?w=400",open:7,close:17,dishes:["Croissant","Iced Coffee","Granola Bowl"]},
+    {id:20,city:"Solwezi",name:"Kansanshi Hotel",category:"fine",location:"Solwezi Town",phone:"+260218821000",image:"https://images.unsplash.com/photo-1552611052-33e04de081de?w=400",open:11,close:22,dishes:["Buffet Dinner","Grilled Bream","Pavlova"]},
+    {id:21,city:"Solwezi",name:"The Royal Diner",category:"local",location:"Solwezi CBD",phone:"+260977444555",image:"https://images.unsplash.com/photo-1567620985032-074b46254ffb?w=400",open:8,close:21,dishes:["Nshima & Beans","Kapenta","Roasted Groundnuts"]},
+    {id:32,city:"Solwezi",name:"Copper Queen Cafe",category:"cafe",location:"Solwezi Market",phone:"+260218820500",image:"https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400",open:7,close:17,dishes:["Zambian Tea","Vitumbuwa","Boiled Eggs & Bread"]},
+    {id:33,city:"Kabwe",name:"Mulungushi Hotel",category:"fine",location:"Freedom Way",phone:"+260215223000",image:"https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400",open:11,close:22,dishes:["Grilled Chicken","Nshima Platter","Fruit Salad"]},
+    {id:34,city:"Kabwe",name:"Zinc Bar & Grill",category:"fine",location:"Kabwe CBD",phone:"+260215224000",image:"https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400",open:10,close:23,dishes:["BBQ Ribs","Nachos","Grilled Steak"]},
+    {id:35,city:"Kabwe",name:"Mama's Kitchen Kabwe",category:"local",location:"Katondo",phone:"+260955300300",image:"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400",open:7,close:19,dishes:["Nshima","Village Chicken","Ifisashi"]},
+    {id:36,city:"Kabwe",name:"Sunrise Cafe Kabwe",category:"cafe",location:"Mahatma Gandhi Rd",phone:"+260955400400",image:"https://images.unsplash.com/photo-1442975631115-c4f7b05b8a2c?w=400",open:6,close:17,dishes:["Vitumbuwa","Sweet Potato Tea","Mandazi"]},
+    {id:37,city:"Chipata",name:"Protea Hotel Chipata",category:"fine",location:"Chipata Town",phone:"+260216221000",image:"https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400",open:11,close:22,dishes:["Nyama Choma","Nshima Buffet","Grilled Fish"]},
+    {id:38,city:"Chipata",name:"Eastern Star Restaurant",category:"local",location:"Chipata CBD",phone:"+260216222000",image:"https://images.unsplash.com/photo-1567620985032-074b46254ffb?w=400",open:8,close:21,dishes:["Nshima & Beans","Groundnut Soup","Roasted Maize"]},
+    {id:39,city:"Chipata",name:"Luangwa Valley Cafe",category:"cafe",location:"Chipata Market",phone:"+260955500500",image:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",open:7,close:17,dishes:["Local Honey Tea","Sweet Bread","Boiled Groundnuts"]},
+    {id:40,city:"Kasama",name:"Kasama Guesthouse Grill",category:"fine",location:"Kasama Town",phone:"+260214221000",image:"https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400",open:10,close:21,dishes:["Smoked Bream","Nshima Platter","Beef Stew"]},
+    {id:41,city:"Kasama",name:"Northern Nshima House",category:"local",location:"Kasama CBD",phone:"+260955600600",image:"https://images.unsplash.com/photo-1541529086526-db283c563270?w=400",open:7,close:20,dishes:["Nshima & Kapenta","Samp","Caterpillar Relish"]},
+    {id:42,city:"Kasama",name:"Bemba Brew Cafe",category:"cafe",location:"Kasama Market",phone:"+260955700700",image:"https://images.unsplash.com/photo-1501339817302-444d3ad072f?w=400",open:6,close:16,dishes:["Chibwantu","Vitumbuwa","Local Ginger Tea"]},
+    {id:43,city:"Mazabuka",name:"Sugar Belt Restaurant",category:"local",location:"Mazabuka Town",phone:"+260213230000",image:"https://images.unsplash.com/photo-1567620985032-074b46254ffb?w=400",open:8,close:21,dishes:["Nshima","Grilled Chicken","Sugarcane Juice"]},
+    {id:44,city:"Mazabuka",name:"Nakambala Club",category:"fine",location:"Nakambala Estate",phone:"+260213231000",image:"https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400",open:11,close:22,dishes:["Steak & Chips","Prawn Cocktail","Beef Burger"]},
+    {id:45,city:"Mazabuka",name:"Tonga Kitchen",category:"local",location:"Mazabuka CBD",phone:"+260955800800",image:"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400",open:7,close:19,dishes:["Thick Nshima","Sour Milk (Amasi)","Dried Fish"]},
+    {id:46,city:"Chingola",name:"Chingola Hotel Restaurant",category:"fine",location:"Chingola CBD",phone:"+260212311000",image:"https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400",open:11,close:22,dishes:["Grilled Steak","Nshima Buffet","Local Dessert"]},
+    {id:47,city:"Chingola",name:"Copper Kitchen",category:"local",location:"Chingola Market",phone:"+260955900900",image:"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400",open:7,close:20,dishes:["Nshima & Chicken","Kapenta","Fresh Juice"]},
+    {id:48,city:"Mufulira",name:"Mufulira Club",category:"fine",location:"Mufulira CBD",phone:"+260212411000",image:"https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400",open:10,close:22,dishes:["Grilled Bream","Beef Stew","Local Salad"]},
+    {id:49,city:"Mufulira",name:"Mine Canteen",category:"local",location:"Mufulira Mine Area",phone:"+260955910910",image:"https://images.unsplash.com/photo-1541529086526-db283c563270?w=400",open:6,close:18,dishes:["Nshima","Ifisashi","Village Beef"]},
+    {id:50,city:"Choma",name:"Choma Museum Cafe",category:"cafe",location:"Choma Town",phone:"+260213521000",image:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",open:8,close:17,dishes:["Tonga Tea","Mandazi","Fruit Platter"]},
+    {id:51,city:"Choma",name:"Southern Grill Choma",category:"fine",location:"Choma CBD",phone:"+260213522000",image:"https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400",open:11,close:22,dishes:["Nyama Choma","Grilled Chicken","Sadza"]},
+    {id:52,city:"Mongu",name:"Barotse Restaurant",category:"local",location:"Mongu Town",phone:"+260217221000",image:"https://images.unsplash.com/photo-1567620985032-074b46254ffb?w=400",open:8,close:21,dishes:["Nshima & Fish","Lozi Relish","Freshwater Crab"]},
+    {id:53,city:"Mongu",name:"Western Province Hotel",category:"fine",location:"Mongu CBD",phone:"+260217222000",image:"https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400",open:11,close:22,dishes:["Grilled Tilapia","Beef Stew","Tropical Juice"]}
+];
+
+// STATE
+let currentCat='all',currentSort='default',currentModalId=null,showingFavs=false,showingVisited=false,selectedStar=0;
+let favourites=JSON.parse(localStorage.getItem('zedbites-favs')||'[]');
+let visited=JSON.parse(localStorage.getItem('zedbites-visited')||'[]');
+let recentlyViewed=JSON.parse(localStorage.getItem('zedbites-recent')||'[]');
+let ratings=JSON.parse(localStorage.getItem('zedbites-ratings')||'{}');
+let viewCounts=JSON.parse(localStorage.getItem('zedbites-views')||'{}');
+let customRestaurants=JSON.parse(localStorage.getItem('zedbites-custom')||'[]');
+let featuredIds=JSON.parse(localStorage.getItem('zedbites-featured')||'[]');
+
+// HELPERS
+const catIcon=c=>c==='fine'?'ph-fork-knife':c==='fastfood'?'ph-hamburger':c==='local'?'ph-cooking-pot':'ph-coffee';
+function isOpen(o,c){const h=new Date().getHours();return h>=o&&h<c;}
+function isOpeningSoon(o,c){const h=new Date().getHours(),m=new Date().getMinutes(),now=h*60+m,opens=o*60;return !isOpen(o,c)&&now<opens&&opens-now<=60;}
+function isClosingSoon(o,c){const h=new Date().getHours(),m=new Date().getMinutes(),now=h*60+m,closes=c*60;return isOpen(o,c)&&closes-now<=30&&closes-now>0;}
+function formatHours(h){const s=h>=12?'PM':'AM';const hr=h>12?h-12:h===0?12:h;return `${hr}:00 ${s}`;}
+function getAvgRating(id){const r=ratings[id];if(!r||!r.length)return 0;return parseFloat((r.reduce((a,b)=>a+b.stars,0)/r.length).toFixed(1));}
+function renderStars(avg,size=12){const full=Math.round(avg);return `<span style="color:#f4c430;font-size:${size}px">${'★'.repeat(full)}${'☆'.repeat(5-full)}</span>`;}
+
+// ZEDBITES SCORE — weighted combination of rating, views, favs, visits
+function getZBScore(id){
+    const avg=parseFloat(getAvgRating(id))||0;
+    const reviewCount=(ratings[id]||[]).length;
+    const favs=favourites.includes(id)?1:0;
+    const vis=visited.includes(id)?1:0;
+    // Weighted: rating 60%, reviews 30%, favs+visits 10%
+    const ratingScore=(avg/5)*60;
+    const reviewScore=Math.min(reviewCount/10,1)*30;
+    const socialScore=(favs+vis)*5;
+    const raw=ratingScore+reviewScore+socialScore;
+    return raw>0?Math.min(raw,10).toFixed(1):null;
+}
+function getStatus(r,modal=false){
+    const dotOpen='<svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="#4caf50"/></svg>';
+    const dotClose='<svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="#f44336"/></svg>';
+    const dotAmber='<svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="#ff9500"/></svg>';
+    if(isClosingSoon(r.open,r.close)){const h=new Date().getHours(),m=new Date().getMinutes(),minsLeft=r.close*60-(h*60+m);const label=`Closing in ${minsLeft}m`;return modal?`<span class="modal-tag status-closing">${dotAmber} ${label}</span>`:`<span class="status-badge s-closing">${dotAmber} ${label.toUpperCase()}</span>`;}
+    if(isOpen(r.open,r.close))return modal?`<span class="modal-tag status-open">${dotOpen} Open Now</span>`:`<span class="status-badge s-open">${dotOpen} OPEN</span>`;
+    if(isOpeningSoon(r.open,r.close)){const h=new Date().getHours(),m=new Date().getMinutes(),minsLeft=r.open*60-(h*60+m);const label=`Opens in ${minsLeft}m`;return modal?`<span class="modal-tag status-soon">${dotAmber} ${label}</span>`:`<span class="status-badge s-soon">${dotAmber} ${label.toUpperCase()}</span>`;}
+    return modal?`<span class="modal-tag status-closed">${dotClose} Closed</span>`:`<span class="status-badge s-closed">Closed</span>`;
+}
+
+// MERGE CUSTOM
+function mergeCustom(){customRestaurants.forEach(r=>{if(!restaurants.find(x=>x.id===r.id))restaurants.push(r);});}
+
+// FAVOURITES
+function saveFavs(){localStorage.setItem('zedbites-favs',JSON.stringify(favourites));}
+function isFav(id){return favourites.includes(id);}
+function toggleFav(id,e){if(e)e.stopPropagation();if(isFav(id)){favourites=favourites.filter(f=>f!==id);showToast('Removed from favourites');}else{favourites.push(id);showToast('Saved!');}saveFavs();filterData();if(currentModalId===id)updateModalFavBtn(id);}
+function toggleFavFilter(){showingFavs=!showingFavs;document.getElementById('favFilterBtn').classList.toggle('active',showingFavs);filterData();}
+function toggleFavFromModal(){if(currentModalId)toggleFav(currentModalId,null);}
+function updateModalFavBtn(id){
+    const b=document.getElementById('modalFavBtn');
+    const faved=isFav(id);
+    b.classList.toggle('favorited',faved);
+    b.innerHTML=faved
+        ?'<i class="ph-fill ph-heart" style="font-size:20px;color:var(--primary);"></i>'
+        :'<i class="ph ph-heart" style="font-size:20px;color:var(--sub-text);"></i>';
+}
+
+// VISITED
+function isVisited(id){return visited.includes(id);}
+function toggleVisited(){if(!currentModalId)return;const id=currentModalId;if(isVisited(id)){visited=visited.filter(v=>v!==id);showToast('Removed from visited');}else{visited.push(id);showToast('Marked as visited!');}localStorage.setItem('zedbites-visited',JSON.stringify(visited));updateModalVisitBtn(id);filterData();}
+function toggleVisitedFilter(){showingVisited=!showingVisited;document.getElementById('visitedFilterBtn').classList.toggle('active',showingVisited);filterData();}
+function updateModalVisitBtn(id){const b=document.getElementById('modalVisitBtn');const v=isVisited(id);b.innerHTML=v?'<i class="ph ph-check-circle" style="font-size:14px"></i> Visited':'<i class="ph ph-check-circle" style="font-size:14px"></i> Mark as Visited';b.classList.toggle('visited',v);}
+
+// SEARCH
+function handleSearch(){document.getElementById('searchClear').classList.toggle('visible',document.getElementById('searchInput').value.length>0);filterData();}
+function clearSearch(){document.getElementById('searchInput').value='';document.getElementById('searchClear').classList.remove('visible');filterData();}
+
+// GREETING
+function updateGreeting(){
+    const h=new Date().getHours(),city=document.getElementById('citySelect').value,label=city==='all'?'Zambia':city;
+    const t=document.getElementById('greetingTitle');
+    const sub=document.getElementById('greetingSubtitle');
+    if(h>=5&&h<12)t.innerText=`Good Morning, ${label}! ☕`;
+    else if(h>=12&&h<17)t.innerText=`Lunchtime in ${label} 🍔`;
+    else t.innerText=`Good Evening, ${label}! 🍷`;
+    // Show open count
+    if(sub){
+        const pool=restaurants.filter(r=>city==='all'||r.city===city);
+        const openCount=pool.filter(r=>isOpen(r.open,r.close)).length;
+        sub.innerText=openCount>0?`${openCount} spot${openCount!==1?'s':''} open right now`:'';
+    }
+}
+
+// SKELETON
+function showSkeletons(){document.getElementById('restaurantCards').innerHTML=Array(8).fill('').map(()=>`<div class="skeleton-card"><div class="skeleton-img skel-anim"></div><div style="padding:10px 0 0"><div class="skeleton-line medium skel-anim"></div><div class="skeleton-line short skel-anim"></div></div><div class="skeleton-btns"><div class="skeleton-btn skel-anim"></div><div class="skeleton-btn skel-anim"></div></div></div>`).join('');}
+
+// RENDER
+function render(list){
+    currentFilteredList=list;
+    const container=document.getElementById('restaurantCards');
+    document.getElementById('resultCount').innerHTML=`Showing <strong>${list.length}</strong> restaurant${list.length!==1?'s':''}`;
+    if(!list.length){
+        const city=document.getElementById('citySelect').value;
+        const cityLabel=city!=='all'?city:'your city';
+        container.innerHTML=`<div class="empty-state">
+            <div class="empty-icon"><i class="ph ph-fork-knife" style="font-size:52px;color:var(--sub-text);"></i></div>
+            <h3>No spots found in ${cityLabel}</h3>
+            <p>We might not have ${cityLabel} covered yet — be the first to add a restaurant!</p>
+            <button onclick="openPublicSubmit()">
+                <i class="ph ph-plus" style="font-size:14px;"></i> Submit a Restaurant
+            </button>
+        </div>`;
+        return;
+    }
+    container.innerHTML='';
+    list.forEach((res,i)=>{
+        const avg=getAvgRating(res.id),rCount=(ratings[res.id]||[]).length;
+        const zbScore=getZBScore(res.id||res.firebaseId);
+        const card=document.createElement('div');
+        card.className='card';card.style.animationDelay=`${i*0.04}s`;card.onclick=()=>openModal(res.id||res.firebaseId);
+        const catIconSvg=(c)=>{const icons={fine:'<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>',fastfood:'<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',local:'<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',cafe:'<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>'};return icons[c]||icons.fine;};
+        const heartIcon=(filled)=>filled?'<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>':'<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+        const pinSvg='<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+        const callSvg='<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+        const chatSvg='<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+        const checkSvg='<svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+        card.innerHTML=`<div class="img-container"><img src="${res.image}" loading="lazy" alt="${res.name}"><span class="cat-icon-badge">${catIconSvg(res.category)}</span><button class="fav-btn ${isFav(res.id)?'favorited':''}" onclick="toggleFav(${JSON.stringify(res.id)},event)">${heartIcon(isFav(res.id))}</button>${isVisited(res.id)?`<span class="visited-badge">${checkSvg} Visited</span>`:''}${res.createdAt&&(Date.now()-res.createdAt)<7*24*60*60*1000?'<span class="new-badge">New</span>':''}${featuredIds.includes(res.id||res.firebaseId)?'<span class="featured-badge">★</span>':''}</div><div class="card-content">${getStatus(res)}<h3>${res.name}</h3><span class="loc-text" style="display:flex;align-items:center;gap:3px;">${pinSvg}${res.location}</span>${zbScore?`<div class="zb-score">ZB ${zbScore}</div>`:''}${avg>0?`<div class="card-rating">${renderStars(avg)}<span class="rating-count">(${rCount})</span></div>`:''}<div class="btn-group" onclick="event.stopPropagation()"><a href="tel:${res.phone}" class="btn-call" style="display:flex;align-items:center;justify-content:center;gap:4px;">${callSvg}Call</a><a href="https://wa.me/${res.phone.replace(/\+/g,'')}?text=${encodeURIComponent(`Hi! I'd like to make a reservation at ${res.name}.`)}" class="btn-wa" style="display:flex;align-items:center;justify-content:center;gap:4px;">${chatSvg}Chat</a></div></div>`;
+        container.appendChild(card);
+    });
+    
+}
+function filterData(){
+    const city=document.getElementById('citySelect').value,term=document.getElementById('searchInput').value.toLowerCase(),onlyOpen=document.getElementById('openToggle').checked;
+    localStorage.setItem('zedbites-city',city);
+    let list=restaurants.filter(r=>{
+        const priceOk=currentPrice==='all'||(currentPrice==='budget'&&(r.category==='fastfood'||r.category==='cafe'))||(currentPrice==='mid'&&(r.category==='local'||r.category==='cafe'||r.category==='fastfood'))||(currentPrice==='fine'&&r.category==='fine');
+        return (city==='all'||r.city===city)&&(r.name.toLowerCase().includes(term)||r.location.toLowerCase().includes(term)||r.city.toLowerCase().includes(term)||(r.dishes&&r.dishes.some(d=>d.toLowerCase().includes(term))))&&(currentCat==='all'||r.category===currentCat)&&(!onlyOpen||isOpen(r.open,r.close))&&(!showingFavs||isFav(r.id))&&(!showingVisited||isVisited(r.id))&&priceOk;
+    });
+    if(currentSort==='open')list.sort((a,b)=>Number(isOpen(b.open,b.close))-Number(isOpen(a.open,a.close)));
+    else if(currentSort==='az')list.sort((a,b)=>a.name.localeCompare(b.name));
+    else if(currentSort==='closing')list.sort((a,b)=>Number(isClosingSoon(b.open,b.close))-Number(isClosingSoon(a.open,a.close)));
+    else if(currentSort==='rating')list.sort((a,b)=>getAvgRating(b.id)-getAvgRating(a.id));
+    else{
+        // Smart sort: during meal times automatically float open spots to top
+        const h=new Date().getHours();
+        const isMealTime=(h>=7&&h<10)||(h>=12&&h<15)||(h>=18&&h<21);
+        if(isMealTime&&currentSort==='default'){
+            list.sort((a,b)=>{
+                const aOpen=isOpen(a.open,a.close)?1:0;
+                const bOpen=isOpen(b.open,b.close)?1:0;
+                if(bOpen!==aOpen)return bOpen-aOpen;
+                return Number(featuredIds.includes(b.id||b.firebaseId))-Number(featuredIds.includes(a.id||a.firebaseId));
+            });
+        } else {
+            list.sort((a,b)=>Number(featuredIds.includes(b.id||b.firebaseId))-Number(featuredIds.includes(a.id||a.firebaseId)));
+        }
+    }
+    const anyActive=currentCat!=='all'||currentSort!=='default'||showingFavs||showingVisited||currentPrice!=='all'||onlyOpen||term||city!=='all';
+    document.getElementById('clearFiltersBtn').style.display=anyActive?'block':'none';
+    render(list);renderRecentlyViewed();renderNewlyAdded();updateGreeting();
+}
+
+function handleCityChange(){
+    updateGreeting();
+    showSkeletons();
+    setTimeout(()=>filterData(),300);
+    const activeTab=document.querySelector('.tab-btn.active');
+    if(activeTab){const label=activeTab.innerText.trim();if(label==='Feed')setTimeout(()=>renderFeed(),300);}
+}
+function setCategory(cat,btn){currentCat=cat;document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');showSkeletons();setTimeout(()=>filterData(),200);}
+function setSort(s,btn){currentSort=s;document.querySelectorAll('.sort-chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');filterData();}
+function toggleOpenNowQuick(){
+    const tog=document.getElementById('openToggle');
+    tog.checked=!tog.checked;
+    syncOpenNowPill();filterData();
+}
+function syncOpenNowPill(){const on=document.getElementById('openToggle').checked;document.getElementById('openNowPill').classList.toggle('active',on);}
+function clearAllFilters(){
+    currentCat='all';currentSort='default';showingFavs=false;showingVisited=false;currentPrice='all';
+    document.getElementById('searchInput').value='';document.getElementById('searchClear').classList.remove('visible');
+    document.getElementById('openToggle').checked=false;
+    document.getElementById('citySelect').value='all';
+    document.getElementById('cityPickerLabel').innerText='All Cities';
+    document.querySelectorAll('.city-picker-option').forEach((o,i)=>o.classList.toggle('active',i===0));
+    document.querySelectorAll('.cat-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+    document.querySelectorAll('.sort-chip').forEach((b,i)=>b.classList.toggle('active',i===0));
+    document.querySelectorAll('.price-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+    document.getElementById('favFilterBtn').classList.remove('active');document.getElementById('visitedFilterBtn').classList.remove('active');
+    document.getElementById('openNowPill').classList.remove('active');
+    updateGreeting();filterData();
+}
+function toggleFeatured(id,on){if(on){if(!featuredIds.includes(id))featuredIds.push(id);}else{featuredIds=featuredIds.filter(f=>f!==id);}localStorage.setItem('zedbites-featured',JSON.stringify(featuredIds));filterData();}
+function clearRecentlyViewed(){recentlyViewed=[];localStorage.setItem('zedbites-recent',JSON.stringify(recentlyViewed));renderRecentlyViewed();}
+
+// MODAL
+let currentFilteredList=[];
+function openModal(id){
+    const res=restaurants.find(r=>r.id===id||r.firebaseId===id);if(!res)return;
+    currentModalId=id;window.currentModalId=id;
+    recentlyViewed=[id,...recentlyViewed.filter(r=>r!==id)].slice(0,5);localStorage.setItem('zedbites-recent',JSON.stringify(recentlyViewed));
+    renderRecentlyViewed();
+    document.getElementById('modalImg').src=res.image;document.getElementById('modalImg').alt=res.name;
+    document.getElementById('modalTitle').innerText=res.name;
+    document.getElementById('modalLocation').innerText=`${res.location}`;
+    document.getElementById('modalCity').innerText=`${res.city}`;
+    const catName=res.category==='fine'?'Fine Dining':res.category==='fastfood'?'Fast Food':res.category==='local'?'Local':'Café';
+    document.getElementById('modalTags').innerHTML=`${getStatus(res,true)}<span class="modal-tag"><i class="ph ph-${catIcon(res.category)}" style="font-size:12px;"></i> ${catName}</span><span class="modal-tag"><i class="ph ph-map-pin" style="font-size:12px;"></i> ${res.city}</span>`;
+    document.getElementById('modalInfoGrid').innerHTML=`<div class="modal-info-item"><div class="modal-info-label">Opens</div><div class="modal-info-value">${formatHours(res.open)}</div></div><div class="modal-info-item"><div class="modal-info-label">Closes</div><div class="modal-info-value">${formatHours(res.close)}</div></div><div class="modal-info-item" style="grid-column:1/-1"><div class="modal-info-label">Phone</div><div class="modal-info-value" style="display:flex;align-items:center;justify-content:space-between">${res.phone}<button onclick="navigator.clipboard.writeText('${res.phone}').then(()=>showToast('Number copied!'))" style="background:var(--input-bg);border:1px solid var(--border);color:var(--sub-text);border-radius:8px;padding:3px 10px;font-size:10px;cursor:pointer;font-family:inherit;">Copy</button></div></div>`;
+    document.getElementById('dishList').innerHTML=res.dishes.map(d=>`<span class="dish-chip">${d}</span>`).join('');
+    const waMsg=encodeURIComponent(`Hey! I found ${res.name} on ZedBites — want to check it out? It's in ${res.location}, ${res.city} 📍`);
+    document.getElementById('modalCallBtn').href=`tel:${res.phone}`;
+    document.getElementById('modalWaBtn').href=`https://wa.me/${res.phone.replace(/\+/g,'')}?text=${encodeURIComponent(`Hi! I'd like to make a reservation at ${res.name} (${res.location}, ${res.city}). Could you please assist?`)}`;
+    document.getElementById('modalMapsBtn').href=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(res.name+' '+res.location+' Zambia')}`;
+    updateModalFavBtn(id);updateModalVisitBtn(id);renderRatingSection(id);
+    // Nav arrows
+    const idx=currentFilteredList.findIndex(r=>(r.id||r.firebaseId)===id);
+    const hasNav=idx>-1&&currentFilteredList.length>1;
+    document.getElementById('modalNavCounter').innerText=hasNav?`${idx+1} / ${currentFilteredList.length}`:'';
+    document.getElementById('modalPrevBtn').style.visibility=hasNav?'visible':'hidden';
+    document.getElementById('modalNextBtn').style.visibility=hasNav?'visible':'hidden';
+    if(hasNav){
+        document.getElementById('modalPrevBtn').disabled=idx===0;
+        document.getElementById('modalNextBtn').disabled=idx===currentFilteredList.length-1;
+    }
+    document.getElementById('modalOverlay').classList.add('open');document.body.style.overflow='hidden';
+}
+function navigateModal(dir){
+    const idx=currentFilteredList.findIndex(r=>(r.id||r.firebaseId)===currentModalId);
+    const next=currentFilteredList[idx+dir];
+    if(next)openModal(next.id||next.firebaseId);
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';selectedStar=0;window.currentModalId=null;}
+function handleOverlayClick(e){if(e.target===document.getElementById('modalOverlay'))closeModal();}
+
+// Swipe on modal image
+let swipeStartX=0;
+document.addEventListener('DOMContentLoaded',()=>{
+    const img=document.getElementById('modalImg');
+    img.addEventListener('touchstart',e=>{swipeStartX=e.touches[0].clientX;},{passive:true});
+    img.addEventListener('touchend',e=>{
+        const diff=swipeStartX-e.changedTouches[0].clientX;
+        if(Math.abs(diff)>50){navigateModal(diff>0?1:-1);}
+    },{passive:true});
+});
+function shareRestaurant(){
+    const res=restaurants.find(r=>r.id===currentModalId||r.firebaseId===currentModalId);if(!res)return;
+    const rid=res.firebaseId||res.id;
+    const url=`${window.location.origin}${window.location.pathname}?r=${rid}`;
+    const text=`Check out ${res.name} in ${res.city} on ZedBites! 🍽️`;
+    if(navigator.share)navigator.share({title:res.name,text,url}).catch(()=>{});
+    else{navigator.clipboard.writeText(`${text} ${url}`).then(()=>showToast('Link copied!')).catch(()=>showToast('Share not supported'));}
+}
+function suggestEdit(){
+    const res=restaurants.find(r=>r.id===currentModalId||r.firebaseId===currentModalId);if(!res)return;
+    const msg=encodeURIComponent(`Hi ZedBites! I'd like to suggest an edit for:\n\n🍽️ Restaurant: ${res.name}\n📍 Location: ${res.location}, ${res.city}\n\nWhat needs updating:\n`);
+    window.open(`https://wa.me/260779223648?text=${msg}`,'_blank');
+}
+
+// RATINGS
+function renderRatingSection(id){
+    const list=ratings[id]||[],avg=getAvgRating(id),total=list.length;
+    const bars=[5,4,3,2,1].map(star=>{const c=list.filter(r=>r.stars===star).length,pct=total?Math.round(c/total*100):0;return `<div class="rating-bar-row"><span class="rating-bar-label">${star}</span><div class="rating-bar-track"><div class="rating-bar-fill" style="width:${pct}%"></div></div></div>`;}).join('');
+    document.getElementById('ratingSummary').innerHTML=`<div><div class="rating-big">${avg>0?avg:'—'}</div><div style="color:#f4c430;font-size:16px">${avg>0?renderStars(avg,16):''}</div><div class="rating-total">${total} review${total!==1?'s':''}</div></div><div class="rating-bars">${bars}</div>`;
+    selectedStar=0;document.querySelectorAll('.star-pick').forEach(b=>b.classList.remove('active'));
+    document.getElementById('reviewsList').innerHTML=list.slice(-5).reverse().map(r=>`<div class="review-item"><div class="review-header"><span style="color:#f4c430;font-size:12px">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</span><span class="review-date">${r.date}</span></div>${r.comment?`<p class="review-text">${r.comment}</p>`:''}</div>`).join('')||'<p style="font-size:12px;color:var(--sub-text)">No reviews yet. Be the first!</p>';
+}
+function pickStar(n){selectedStar=n;document.querySelectorAll('.star-pick').forEach((b,i)=>b.classList.toggle('active',i<n));}
+function submitReview(){
+    if(!selectedStar){showToast('Please select a star rating first');return;}
+    const comment=document.getElementById('reviewInput').value.trim(),id=currentModalId;
+    const stars=selectedStar; // capture before reset
+    if(!ratings[id])ratings[id]=[];
+    ratings[id].push({stars,comment,date:new Date().toLocaleDateString()});
+    localStorage.setItem('zedbites-ratings',JSON.stringify(ratings));
+    document.getElementById('reviewInput').value='';selectedStar=0;
+    renderRatingSection(id);filterData();
+    showToast('Review submitted!');
+    if(window.saveRatingToFirebase)window.saveRatingToFirebase(id,stars,comment);
+}
+
+// RECENTLY VIEWED
+function renderRecentlyViewed(){const sec=document.getElementById('recentSection'),scr=document.getElementById('recentScroll');if(!recentlyViewed.length){sec.style.display='none';return;}sec.style.display='block';scr.innerHTML=recentlyViewed.map(id=>{const r=restaurants.find(x=>x.id===id||x.firebaseId===id);return r?`<div class="recent-chip" onclick="openModal(${JSON.stringify(r.id||r.firebaseId)})"><img src="${r.image}" alt="${r.name}" loading="lazy"><span>${r.name}</span></div>`:''}).join('');}
+
+function renderNewlyAdded(){
+    const sec=document.getElementById('newlyAddedSection');
+    const scr=document.getElementById('newlyAddedScroll');
+    // Only show restaurants that came from Firebase (have createdAt timestamp)
+    const fbRestaurants=restaurants.filter(r=>r.createdAt).sort((a,b)=>b.createdAt-a.createdAt).slice(0,10);
+    if(!fbRestaurants.length){sec.style.display='none';return;}
+    sec.style.display='block';
+    const now=Date.now();
+    scr.innerHTML=fbRestaurants.map(r=>{
+        const isNew=r.createdAt&&(now-r.createdAt)<7*24*60*60*1000;
+        return `<div class="new-r-card" onclick="openModal(${JSON.stringify(r.id||r.firebaseId)})">
+            <img class="new-r-img" src="${r.image}" loading="lazy" alt="${r.name}">
+            <div class="new-r-body">
+                <div class="new-r-name">${r.name}</div>
+                <div class="new-r-loc">${r.city}</div>
+                ${isNew?'<div class="new-r-badge">New</div>':''}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// NEAR ME
+function findNearMe(){showToast('Getting your location...');if(!navigator.geolocation){showToast('⚠️ Location not supported');return;}navigator.geolocation.getCurrentPosition(pos=>{showNearbyMap(pos.coords.latitude,pos.coords.longitude);},()=>{showToast('⚠️ Location permission denied');});}
+function showNearbyMap(lat,lng){
+    document.getElementById('mapFrame').innerHTML=`<iframe width="100%" height="100%" frameborder="0" style="border:0;" src="https://www.google.com/maps/embed/v1/search?key=AIzaSyBmfQNJLKuR6o8TUWI1fuRSkMNs04J1V3w&q=restaurants&center=${lat},${lng}&zoom=14" allowfullscreen loading="lazy"></iframe>`;
+    const city=document.getElementById('citySelect').value,pool=city==='all'?restaurants:restaurants.filter(r=>r.city===city);
+    document.getElementById('mapList').innerHTML=pool.slice(0,10).map(r=>`<div class="map-list-item" onclick="openModal(${JSON.stringify(r.id||r.firebaseId)})"><img class="map-list-img" src="${r.image}" alt="${r.name}"><div class="map-list-info"><div class="map-list-name">${r.name}</div><div class="map-list-loc">📍 ${r.location}, ${r.city}</div>${getStatus(r)}</div><a href="https://www.google.com/maps/dir/?api=1&origin=${lat},${lng}&destination=${encodeURIComponent(r.name+' '+r.city+' Zambia')}" target="_blank" class="map-dir-btn" onclick="event.stopPropagation()">Go</a></div>`).join('');
+    showToast('Showing nearby restaurants!');
+}
+
+// ADMIN DASHBOARD
+function renderAdminDashboard(){
+    const total=restaurants.length,custom=restaurants.filter(r=>r.custom).length,totalRatings=Object.values(ratings).reduce((a,b)=>a+b.length,0),totalFavs=favourites.length;
+    const cities={};restaurants.forEach(r=>{cities[r.city]=(cities[r.city]||0)+1;});const maxCity=Math.max(...Object.values(cities));
+    const cityBars=Object.entries(cities).sort((a,b)=>b[1]-a[1]).map(([city,count])=>`<div class="admin-city-row"><span class="admin-city-name">${city}</span><div class="admin-city-bar-track"><div class="admin-city-bar-fill" style="width:${Math.round(count/maxCity*100)}%"></div></div><span class="admin-city-count">${count}</span></div>`).join('');
+    const featuredList=restaurants.slice(0,10).map(r=>`<div class="admin-top-item"><div class="admin-top-info"><div class="admin-top-name">${r.name}</div><div class="admin-top-city">${r.city}</div></div><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:var(--sub-text);"><input type="checkbox" ${featuredIds.includes(r.id||r.firebaseId)?'checked':''} onchange="toggleFeatured('${r.id||r.firebaseId}',this.checked)" style="accent-color:var(--primary)"> Featured</label></div>`).join('');
+    const pending=(window._pendingSubmissions||[]).filter(s=>s.status==='pending');
+    const pendingCount=pending.length;
+    const pendingHTML=pendingCount?pending.map(s=>`<div class="admin-top-item" style="flex-direction:column;align-items:flex-start;gap:8px;"><div style="width:100%;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;"><div style="flex:1;min-width:0;"><div class="admin-top-name">${s.name}</div><div class="admin-top-city">📍 ${s.location||'—'}, ${s.city||'—'} · ${s.category||'—'}</div><div style="font-size:10px;color:var(--sub-text);margin-top:2px;">${s.phone||'—'}</div></div><div style="display:flex;gap:6px;flex-shrink:0;"><button onclick='window.approveSubmission(${JSON.stringify(s).replace(/'/g,"&#39;")})' style="background:var(--green);color:white;border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">Approve</button><button onclick="window.rejectSubmission('${s.fbId}')" style="background:var(--red);color:white;border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">Reject</button></div></div></div>`).join(''):`<p style="font-size:12px;color:var(--sub-text)">No pending submissions.</p>`;
+    document.getElementById('adminContent').innerHTML=`<div class="admin-grid"><div class="admin-card"><div class="admin-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg></div><div class="admin-card-value">${total}</div><div class="admin-card-label">Total Restaurants</div></div><div class="admin-card"><div class="admin-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="admin-card-value">${custom}</div><div class="admin-card-label">Added by You</div></div><div class="admin-card"><div class="admin-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="admin-card-value">${totalRatings}</div><div class="admin-card-label">Total Reviews</div></div><div class="admin-card"><div class="admin-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="admin-card-value">${totalFavs}</div><div class="admin-card-label">Favourites</div></div></div><p class="admin-section-title">Pending Submissions ${pendingCount>0?`<span style="background:var(--red);color:#fff;border-radius:10px;padding:1px 7px;font-size:10px;margin-left:6px;">${pendingCount}</span>`:''}</p><p style="font-size:11px;color:var(--sub-text);margin-bottom:10px;">User-submitted restaurants — approve to make live.</p><div class="admin-top-list">${pendingHTML}</div><p class="admin-section-title" style="margin-top:20px">Restaurants by City</p>${cityBars}<p class="admin-section-title" style="margin-top:20px">Featured Spots</p><p style="font-size:11px;color:var(--sub-text);margin-bottom:10px;">These appear at the top when sorting by Featured.</p><div class="admin-top-list">${featuredList}</div>`;
+}
+
+// TOAST
+function showToast(msg){const t=document.getElementById('toast');t.innerText=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+// ADD PANEL
+let selectedCat='';
+function openAddPanel(){document.getElementById('addOverlay').classList.add('open');document.body.style.overflow='hidden';renderAddedList();restoreFormDraft();}
+function closeAddPanel(){saveFormDraft();document.getElementById('addOverlay').classList.remove('open');document.body.style.overflow='';}
+function saveFormDraft(){const draft={name:document.getElementById('f-name').value,city:document.getElementById('f-city').value,phone:document.getElementById('f-phone').value,location:document.getElementById('f-location').value,dishes:document.getElementById('f-dishes').value,image:document.getElementById('f-image').value,cat:selectedCat};if(draft.name||draft.phone||draft.location)localStorage.setItem('zedbites-draft',JSON.stringify(draft));else localStorage.removeItem('zedbites-draft');}
+function restoreFormDraft(){const d=localStorage.getItem('zedbites-draft');if(!d)return;try{const draft=JSON.parse(d);if(draft.name){document.getElementById('f-name').value=draft.name||'';document.getElementById('f-city').value=draft.city||'';document.getElementById('f-phone').value=draft.phone||'';document.getElementById('f-location').value=draft.location||'';document.getElementById('f-dishes').value=draft.dishes||'';document.getElementById('f-image').value=draft.image||'';if(draft.image)previewImage();if(draft.cat){selectedCat=draft.cat;document.querySelectorAll('.cat-pick-btn').forEach(b=>{if(b.onclick.toString().includes(`'${draft.cat}'`))b.classList.add('selected');});}showToast('📝 Draft restored');}}catch(e){}}
+function handleAddOverlayClick(e){if(e.target===document.getElementById('addOverlay'))closeAddPanel();}
+function pickCat(cat,btn){selectedCat=cat;document.querySelectorAll('.cat-pick-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');}
+function updateHourDisplay(sliderId,displayId){document.getElementById(displayId).innerText=formatHours(parseInt(document.getElementById(sliderId).value));}
+function previewImage(){const url=document.getElementById('f-image').value.trim(),preview=document.getElementById('f-img-preview');if(url){preview.src=url;preview.classList.add('visible');preview.onerror=()=>preview.classList.remove('visible');}else preview.classList.remove('visible');}
+function resetForm(){document.getElementById('f-edit-id').value='';['f-name','f-city','f-phone','f-location','f-dishes','f-image'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-img-preview').classList.remove('visible');document.getElementById('f-open').value=9;document.getElementById('f-close').value=21;document.getElementById('f-open-display').innerText='9:00 AM';document.getElementById('f-close-display').innerText='9:00 PM';document.querySelectorAll('.cat-pick-btn').forEach(b=>b.classList.remove('selected'));document.getElementById('addSubmitBtn').innerText='Save Restaurant';selectedCat='';localStorage.removeItem('zedbites-draft');}
+
+function editRestaurant(id){
+    const r=restaurants.find(x=>x.id===id||x.firebaseId===id);if(!r)return;
+    document.getElementById('f-edit-id').value=r.firebaseId||r.id;
+    document.getElementById('f-name').value=r.name;document.getElementById('f-city').value=r.city;
+    document.getElementById('f-phone').value=r.phone;document.getElementById('f-location').value=r.location;
+    document.getElementById('f-dishes').value=r.dishes.join(', ');document.getElementById('f-image').value=r.image;
+    document.getElementById('f-open').value=r.open;document.getElementById('f-close').value=r.close;
+    document.getElementById('f-open-display').innerText=formatHours(r.open);document.getElementById('f-close-display').innerText=formatHours(r.close);
+    selectedCat=r.category;
+    document.querySelectorAll('.cat-pick-btn').forEach(b=>b.classList.toggle('selected',b.getAttribute('onclick').includes(`'${r.category}'`)));
+    previewImage();document.getElementById('addSubmitBtn').innerText='Update Restaurant';openAddPanel();
+}
+
+async function submitRestaurant(){
+    const editId=document.getElementById('f-edit-id').value,name=document.getElementById('f-name').value.trim(),city=document.getElementById('f-city').value,phone=document.getElementById('f-phone').value.trim(),location=document.getElementById('f-location').value.trim(),open=parseInt(document.getElementById('f-open').value),close=parseInt(document.getElementById('f-close').value),dishesRaw=document.getElementById('f-dishes').value.trim(),image=document.getElementById('f-image').value.trim();
+    if(!name||!city||!phone||!location||!selectedCat){showToast('⚠️ Please fill in all required fields');return;}
+    if(open>=close){showToast('⚠️ Closing time must be after opening time');return;}
+    const dishes=dishesRaw?dishesRaw.split(',').map(d=>d.trim()).filter(Boolean).slice(0,3):['Local Favourite'];
+    const fallbackImg='https://images.unsplash.com/photo-1567620985032-074b46254ffb?w=400';
+    const data={city,name,category:selectedCat,location,phone,open,close,dishes,image:image||fallbackImg,custom:true};
+    const isOwner=localStorage.getItem('zedbites-owner')==='true';
+    showToast('⏳ Saving...');
+    if(editId){
+        // editing existing — always owner action
+        if(window.updateInFirebase)await window.updateInFirebase(editId,data);
+        const idx=restaurants.findIndex(r=>r.firebaseId===editId||r.id===editId);if(idx>-1)restaurants[idx]={...restaurants[idx],...data};
+        const cidx=customRestaurants.findIndex(r=>r.firebaseId===editId||r.id===editId);if(cidx>-1)customRestaurants[cidx]={...customRestaurants[cidx],...data};
+        localStorage.setItem('zedbites-custom',JSON.stringify(customRestaurants));
+        showToast(`${name} updated!`);
+    } else if(isOwner){
+        // owner — save directly to restaurants collection
+        if(window.saveToFirebase){const fbId=await window.saveToFirebase(data);if(fbId){const withId={...data,id:fbId,firebaseId:fbId};customRestaurants.push(withId);localStorage.setItem('zedbites-custom',JSON.stringify(customRestaurants));}}
+        showToast(`${name} is now live!`);
+    } else {
+        // regular user — send to submissions queue for approval
+        if(window.submitToFirebase){
+            const ok=await window.submitToFirebase({...data,status:'pending'});
+            if(ok)showToast('Submitted for review!');
+        }
+    }
+    resetForm();closeAddPanel();renderAddedList();filterData();
+}
+
+async function deleteCustomRestaurant(id){
+    const res=restaurants.find(r=>r.id===id||r.firebaseId===id);
+    if(res&&res.firebaseId&&window.deleteFromFirebase)await window.deleteFromFirebase(res.firebaseId);
+    customRestaurants=customRestaurants.filter(r=>r.id!==id&&r.firebaseId!==id);
+    const idx=restaurants.findIndex(r=>r.id===id||r.firebaseId===id);if(idx>-1)restaurants.splice(idx,1);
+    localStorage.setItem('zedbites-custom',JSON.stringify(customRestaurants));renderAddedList();filterData();showToast('Removed');
+}
+
+function renderAddedList(){
+    const section=document.getElementById('addedListSection'),list=document.getElementById('addedList'),allCustom=restaurants.filter(r=>r.custom);
+    if(!allCustom.length){section.style.display='none';return;}section.style.display='block';
+    list.innerHTML=allCustom.map(r=>`<div class="added-item"><div><div class="added-item-name">${r.name}</div><div class="added-item-city">${r.location}, ${r.city}</div></div><div class="added-item-actions"><button class="added-item-edit" onclick="editRestaurant(${JSON.stringify(r.firebaseId||r.id)})"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="added-item-del" onclick="deleteCustomRestaurant(${JSON.stringify(r.firebaseId||r.id)})"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div></div>`).join('');
+}
+
+// SECRET UNLOCK
+let logoTapCount=0,logoTapTimer=null;
+function handleLogoTap(){
+    logoTapCount++;clearTimeout(logoTapTimer);
+    if(logoTapCount>=5){
+        logoTapCount=0;
+        const isUnlocked=localStorage.getItem('zedbites-owner')==='true';
+        if(isUnlocked){openAddPanel();}
+        else{
+            const pin=prompt('Enter owner PIN:');
+            if(pin==='2626'){
+                localStorage.setItem('zedbites-owner','true');
+                document.getElementById('addFab').style.display='flex';
+                document.getElementById('adminTabBtn').style.display='block';
+                showToast('🔓 Owner mode unlocked!');
+                // Sign into Firebase in the background for write access
+                const email=prompt('Enter owner email (for secure cloud access):');
+                const password=prompt('Enter owner password:');
+                if(email&&password&&window.firebaseSignIn){
+                    window.firebaseSignIn(email,password).then(ok=>{
+                        if(ok)showToast('🔒 Signed in securely');
+                        else showToast('⚠️ Firebase sign-in failed — app works but writes may be blocked');
+                    });
+                }
+            } else if(pin!==null)showToast('Wrong PIN');
+        }
+        return;
+    }
+    logoTapTimer=setTimeout(()=>{logoTapCount=0;},2000);
+}
+function checkOwnerMode(){if(localStorage.getItem('zedbites-owner')==='true'){document.getElementById('addFab').style.display='flex';document.getElementById('adminTabBtn').style.display='block';}}
+
+// PUBLIC SUBMIT FORM
+let publicCat='';
+function openPublicSubmit(){document.getElementById('publicSubmitOverlay').classList.add('open');document.body.style.overflow='hidden';}
+function closePublicSubmit(){document.getElementById('publicSubmitOverlay').classList.remove('open');document.body.style.overflow='';}
+function pickPublicCat(cat,btn){publicCat=cat;btn.closest('.cat-picker').querySelectorAll('.cat-pick-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');}
+async function submitPublicForm(){
+    const name=document.getElementById('ps-name').value.trim();
+    const city=document.getElementById('ps-city').value;
+    const phone=document.getElementById('ps-phone').value.trim();
+    const location=document.getElementById('ps-location').value.trim();
+    const note=document.getElementById('ps-note').value.trim();
+    if(!name||!city||!phone||!location||!publicCat){showToast('⚠️ Please fill in all required fields');return;}
+    // Duplicate check — already exists in restaurants
+    const duplicate=restaurants.find(r=>r.name.toLowerCase()===name.toLowerCase()&&r.city===city);
+    if(duplicate){showToast('⚠️ This restaurant is already on ZedBites!');return;}
+    // Already pending in submissions queue
+    const pendingDupe=(window._pendingSubmissions||[]).find(s=>s.name.toLowerCase()===name.toLowerCase()&&s.city===city);
+    if(pendingDupe){showToast('⚠️ Already submitted — pending review');return;}
+    const data={name,city,phone,location,category:publicCat,note,open:9,close:21,dishes:['Local Favourite'],image:'',status:'pending'};
+    if(window.submitToFirebase){
+        showToast('⏳ Submitting...');
+        const ok=await window.submitToFirebase(data);
+        if(ok){
+            showToast('Thanks! We\'ll review and add it soon.');
+            ['ps-name','ps-city','ps-phone','ps-location','ps-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+            publicCat='';
+            document.querySelectorAll('#publicSubmitPanel .cat-pick-btn').forEach(b=>b.classList.remove('selected'));
+            closePublicSubmit();
+        }
+    } else {
+        // Fallback to WhatsApp if Firebase not ready
+        const msg=encodeURIComponent(`Hi ZedBites! I'd like to suggest a restaurant:\n\n🍽️ ${name}\n📍 ${location}, ${city}\n📞 ${phone}\n${note?'ℹ️ '+note:''}`);
+        window.open(`https://wa.me/260779223648?text=${msg}`,'_blank');
+        closePublicSubmit();
+    }
+}
+
+
+// Init Lucide icons — fallback for any dynamic icons
+
+
+(function(){
+    const params=new URLSearchParams(window.location.search);
+    const rid=params.get('r');
+    if(rid){
+        // Wait for Firebase to load the restaurant first
+        const tryOpen=()=>{
+            const res=restaurants.find(r=>r.id===rid||r.firebaseId===rid);
+            if(res)openModal(res.id||res.firebaseId);
+            else setTimeout(tryOpen,500); // retry until Firebase loads it
+        };
+        setTimeout(tryOpen,800);
+    }
+})();
+// Set tab-bar sticky offset to actual nav height
+function updateTabBarTop(){
+    const header=document.getElementById('stickyHeader');
+    if(!header)return;
+    const h=header.offsetHeight;
+    const feedEl=document.getElementById('feedContainer');
+    if(feedEl)feedEl.style.height='calc(100dvh - '+h+'px)';
+    document.querySelectorAll('.feed-card').forEach(fc=>fc.style.height='calc(100dvh - '+h+'px)');
+}
+window.addEventListener('load',updateTabBarTop);
+window.addEventListener('resize',updateTabBarTop);
+
+// ── NAV SCROLL BEHAVIOUR ─────────────────────────────────────
+(function(){
+    const header=document.getElementById('stickyHeader');
+    const nav=document.querySelector('nav');
+    if(!header||!nav)return;
+
+    let lastY=window.scrollY;
+    let ticking=false;
+
+    window.addEventListener('scroll',()=>{
+        if(ticking)return;
+        ticking=true;
+        requestAnimationFrame(()=>{
+            const y=window.scrollY;
+            const delta=y-lastY;
+
+            if(y<=60){
+                // Near top — show full nav
+                header.classList.remove('header-hidden');
+                nav.classList.remove('nav-compact');
+            } else if(delta>6){
+                // Scrolling DOWN fast enough — hide whole header
+                header.classList.add('header-hidden');
+            } else if(delta<-6){
+                // Scrolling UP — show header in compact mode
+                header.classList.remove('header-hidden');
+                nav.classList.add('nav-compact');
+            }
+
+            lastY=y;
+            ticking=false;
+        });
+    },{passive:true});
+})();
+
+// ── FOOD FEED ──────────────────────────────────────────────
+function renderFeed(){
+    const city=document.getElementById('citySelect').value;
+    let pool=[...restaurants].filter(r=>city==='all'||r.city===city);
+    const hasScores=pool.some(r=>getZBScore(r.id||r.firebaseId));
+    if(hasScores){
+        pool.sort((a,b)=>(parseFloat(getZBScore(b.id||b.firebaseId)||0))-(parseFloat(getZBScore(a.id||a.firebaseId)||0)));
+    } else {
+        // Meal-time aware: open spots first, then newest
+        const h=new Date().getHours();
+        const isMealTime=(h>=7&&h<10)||(h>=12&&h<15)||(h>=18&&h<21);
+        if(isMealTime)pool.sort((a,b)=>Number(isOpen(b.open,b.close))-Number(isOpen(a.open,a.close)));
+        else pool.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    }
+    const container=document.getElementById('feedContainer');
+    if(!pool.length){
+        container.innerHTML=`<div style="height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:40px 20px;text-align:center;"><i class="ph ph-fork-knife" style="font-size:52px;color:var(--sub-text);"></i><h3 style="font-size:17px;font-weight:700;">No restaurants found</h3><p style="font-size:13px;color:var(--sub-text);">Try a different city or be the first to add one</p><button style="margin-top:8px;background:var(--primary);color:white;border:none;padding:12px 24px;border-radius:20px;font-family:inherit;font-weight:700;cursor:pointer;" onclick="openPublicSubmit()">Submit a Restaurant</button></div>`;
+        return;
+    }
+    container.innerHTML=pool.map((res,i)=>{
+        const avg=getAvgRating(res.id);
+        const zbScore=getZBScore(res.id||res.firebaseId);
+        const si=getStatus(res,false);
+        const statusClass=isOpen(res.open,res.close)?'s-open':isClosingSoon(res.open,res.close)?'s-closing':'s-closed';
+        const dishes=res.dishes&&res.dishes.length?res.dishes.slice(0,3):[];
+        const rid=JSON.stringify(res.id||res.firebaseId);
+        return `<div class="feed-card">
+            <img class="feed-bg" src="${res.image}" loading="${i<3?'eager':'lazy'}" alt="${res.name}">
+            <div class="feed-overlay"></div>
+            ${zbScore?`<div class="feed-zb">ZB ${zbScore}</div>`:''}
+            <div class="feed-counter">${i+1} / ${pool.length}</div>
+            <div class="feed-side">
+                <button class="feed-side-btn" onclick="toggleFav(${rid},event)">
+                    <i class="${isFav(res.id)?'ph-fill ph-heart':'ph ph-heart'}" style="font-size:20px;${isFav(res.id)?'color:var(--primary)':'color:white'}"></i>
+                </button>
+                <button class="feed-side-btn" onclick="openModal(${rid})">
+                    <i class="ph ph-info" style="font-size:20px;color:white;"></i>
+                </button>
+            </div>
+            <div class="feed-content">
+                <div class="feed-status"><span class="status-badge ${statusClass}">${isOpen(res.open,res.close)?'● OPEN':isClosingSoon(res.open,res.close)?'● CLOSING SOON':'CLOSED'}</span></div>
+                <div class="feed-name">${res.name}</div>
+                <div class="feed-loc"><i class="ph ph-map-pin" style="font-size:13px;"></i>${res.location}, ${res.city}</div>
+                ${dishes.length?`<div class="feed-dish-chips">${dishes.map(d=>`<span class="feed-dish-chip">${d}</span>`).join('')}</div>`:''}
+                <div class="feed-actions">
+                    <button class="feed-cta" onclick="openModal(${rid})">
+                        <i class="ph ph-arrow-square-out" style="font-size:15px;"></i> View Restaurant
+                    </button>
+                    <a href="tel:${res.phone}" class="feed-wa" onclick="event.stopPropagation()">
+                        <i class="ph ph-phone" style="font-size:15px;"></i> Call
+                    </a>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ── LEADERBOARD ────────────────────────────────────────────
+function renderLeaderboard(){
+    const city=document.getElementById('citySelect').value;
+    let pool=[...restaurants].filter(r=>city==='all'||r.city===city);
+    const medals=['1','2','3','4','5','6','7','8','9','10'];
+    const section=document.getElementById('leaderboardContent');
+
+    function makeList(title,sorted,scoreLabel){
+        const top=sorted.slice(0,10);
+        if(!top.length)return '';
+        const items=top.map((r,i)=>`
+            <div class="leaderboard-item" onclick="openModal(${JSON.stringify(r.id||r.firebaseId)})">
+                <div class="lb-rank">${medals[i]||i+1}</div>
+                <img class="lb-img" src="${r.image}" loading="lazy" alt="${r.name}">
+                <div class="lb-info">
+                    <div class="lb-name">${r.name}</div>
+                    <div class="lb-city">${r.location}, ${r.city}</div>
+                </div>
+                <div class="lb-score">${scoreLabel(r)}</div>
+            </div>`).join('');
+        return `<div class="leaderboard-category"><div class="leaderboard-title">${title}</div>${items}</div>`;
+    }
+
+    const byZB=[...pool].sort((a,b)=>(parseFloat(getZBScore(b.id||b.firebaseId)||0))-(parseFloat(getZBScore(a.id||a.firebaseId)||0))).filter(r=>getZBScore(r.id||r.firebaseId));
+    const byRating=[...pool].filter(r=>getAvgRating(r.id)>0).sort((a,b)=>getAvgRating(b.id)-getAvgRating(a.id));
+    const budget=[...pool].filter(r=>r.category==='fastfood'||r.category==='cafe').sort((a,b)=>(parseFloat(getZBScore(b.id||b.firebaseId)||0))-(parseFloat(getZBScore(a.id||a.firebaseId)||0)));
+    const local=[...pool].filter(r=>r.category==='local').sort((a,b)=>(parseFloat(getZBScore(b.id||b.firebaseId)||0))-(parseFloat(getZBScore(a.id||a.firebaseId)||0)));
+
+    const cityLabel=city==='all'?'Zambia':city;
+    section.innerHTML=
+        (byZB.length?makeList(`Top Restaurants in ${cityLabel}`,byZB,r=>`<span style="font-size:11px;color:var(--sub-text)">ZB</span> ${getZBScore(r.id||r.firebaseId)}`):
+        `<div class="leaderboard-category"><div class="leaderboard-title">Top Restaurants in ${cityLabel}</div><p style="font-size:12px;color:var(--sub-text);padding:10px 0">Rate some restaurants to build the leaderboard!</p></div>`)+
+        makeList('Highest Rated',byRating,r=>`${getAvgRating(r.id)} <span style="color:#f4c430">★</span>`)+
+        makeList('Best Budget Spots',budget,r=>getZBScore(r.id||r.firebaseId)?`ZB ${getZBScore(r.id||r.firebaseId)}`:'—')+
+        makeList('Best Local Food',local,r=>getZBScore(r.id||r.firebaseId)?`ZB ${getZBScore(r.id||r.firebaseId)}`:'—');
+}
+
+// ── SPIN THE WHEEL ─────────────────────────────────────────
+var wheelSegments=['🍔 Burgers','🫕 Nshima','🍗 Chicken','🥩 Grills','☕ Café','🌯 Shawarma','🍟 Fast Food','🐟 Bream & Fish'];
+var wheelColors=['#ff6b00','#ff9500','#e65c00','#ffb347','#cc5500','#ff7f50','#ff6347','#ffa500'];
+var wheelAngle=0,wheelSpinning=false;
+
+function drawWheel(){
+    const canvas=document.getElementById('wheelCanvas');if(!canvas)return;
+    const dpr=window.devicePixelRatio||1;
+    const size=260;
+    canvas.width=size*dpr;canvas.height=size*dpr;
+    canvas.style.width=size+'px';canvas.style.height=size+'px';
+    const ctx=canvas.getContext('2d');
+    ctx.scale(dpr,dpr);
+    const cx=130,cy=130,r=120,seg=wheelSegments.length,arc=(2*Math.PI)/seg;
+    ctx.clearRect(0,0,size,size);
+    wheelSegments.forEach((label,i)=>{
+        const start=wheelAngle+(i*arc),end=start+arc;
+        ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();
+        ctx.fillStyle=wheelColors[i%wheelColors.length];ctx.fill();
+        ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.lineWidth=1.5;ctx.stroke();
+        ctx.save();ctx.translate(cx,cy);ctx.rotate(start+arc/2);
+        ctx.textAlign='right';ctx.fillStyle='white';
+        ctx.shadowColor='rgba(0,0,0,0.6)';ctx.shadowBlur=4;
+        ctx.font='bold 11px sans-serif';
+        ctx.fillText(label,r-8,4);
+        ctx.restore();
+    });
+    ctx.beginPath();ctx.arc(cx,cy,18,0,2*Math.PI);ctx.fillStyle=wheelColors[0];ctx.fill();
+    ctx.strokeStyle='white';ctx.lineWidth=2;ctx.stroke();
+}
+
+function openWheelModal(){
+    document.getElementById('wheelOverlay').classList.add('open');
+    document.getElementById('wheelResult').innerText='';
+    drawWheel();
+}
+function closeWheelModal(){document.getElementById('wheelOverlay').classList.remove('open');}
+
+function spinWheel(){
+    if(wheelSpinning)return;
+    wheelSpinning=true;
+    document.getElementById('wheelResult').innerText='';
+    document.getElementById('wheelSpinBtn').disabled=true;
+    const extraSpins=(5+Math.floor(Math.random()*5))*2*Math.PI;
+    const finalAngle=Math.random()*2*Math.PI;
+    const total=extraSpins+finalAngle;
+    const duration=3000;
+    const start=performance.now();
+    const startAngle=wheelAngle;
+    function animate(now){
+        const elapsed=now-start;
+        const progress=Math.min(elapsed/duration,1);
+        const ease=1-Math.pow(1-progress,4);
+        wheelAngle=startAngle+total*ease;
+        drawWheel();
+        if(progress<1){requestAnimationFrame(animate);}
+        else{
+            wheelSpinning=false;
+            document.getElementById('wheelSpinBtn').disabled=false;
+            // Find which segment the pointer (top = -π/2) lands on
+            const seg=wheelSegments.length;
+            const arc=(2*Math.PI)/seg;
+            const normalized=(((-Math.PI/2)-wheelAngle)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+            const idx=Math.floor(normalized/arc)%seg;
+            const picked=wheelSegments[idx];
+            document.getElementById('wheelResult').innerText=`You got: ${picked}!`;
+            // Find a matching restaurant
+            const city=document.getElementById('citySelect').value;
+            let pool=restaurants.filter(r=>city==='all'||r.city===city);
+            let match=pool.filter(r=>{
+                if(picked.includes('Burger')||picked.includes('Fast Food')||picked.includes('Shawarma'))return r.category==='fastfood';
+                if(picked.includes('Nshima')||picked.includes('Bream'))return r.category==='local';
+                if(picked.includes('Chicken'))return r.category==='fastfood'||r.category==='local';
+                if(picked.includes('Grills')||picked.includes('Fine'))return r.category==='fine';
+                if(picked.includes('Café'))return r.category==='cafe';
+                return true;
+            });
+            if(!match.length)match=pool;
+            const chosen=match[Math.floor(Math.random()*match.length)];
+            if(chosen){
+                setTimeout(()=>{
+                    closeWheelModal();
+                    openModal(chosen.id||chosen.firebaseId);
+                },1200);
+            }
+        }
+    }
+    requestAnimationFrame(animate);
+}
+
+</script>
+</body>
+</html>
