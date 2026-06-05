@@ -940,10 +940,13 @@ onSnapshot(query(col,orderBy('createdAt','desc')),(snapshot)=>{
     window._fbIds.forEach(fid=>{const i=restaurants.findIndex(r=>r.firebaseId===fid);if(i>-1)restaurants.splice(i,1);});
     window._fbIds=[];
     snapshot.forEach(d=>{if(!restaurants.find(r=>r.firebaseId===d.id)){restaurants.push({...d.data(),firebaseId:d.id,id:d.id});window._fbIds.push(d.id);}});
-    renderAddedList();filterData();renderNewlyAdded();
+    if(window.filterData)window.filterData();
+if(window.renderNewlyAdded)window.renderNewlyAdded();
+if(window.renderAddedList)window.renderAddedList();
 },(error)=>{
     console.warn('Firestore error:',error.message);
-    filterData();renderNewlyAdded();
+    if(window.filterData)window.filterData();
+if(window.renderNewlyAdded)window.renderNewlyAdded();
 });
 });
 const isOwnerAuth=()=>window._isFirebaseOwner||localStorage.getItem('zedbites-owner')==='true';
