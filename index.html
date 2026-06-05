@@ -941,6 +941,10 @@ onSnapshot(query(col,orderBy('createdAt','desc')),(snapshot)=>{
     window._fbIds=[];
     snapshot.forEach(d=>{if(!restaurants.find(r=>r.firebaseId===d.id)){restaurants.push({...d.data(),firebaseId:d.id,id:d.id});window._fbIds.push(d.id);}});
     renderAddedList();filterData();renderNewlyAdded();
+},(error)=>{
+    console.warn('Firestore error:',error.message);
+    filterData();renderNewlyAdded();
+});
 });
 const isOwnerAuth=()=>window._isFirebaseOwner||localStorage.getItem('zedbites-owner')==='true';
 
