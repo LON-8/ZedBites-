@@ -937,31 +937,30 @@ onAuthStateChanged(auth,user=>{
 const col=collection(db,'restaurants');
 onSnapshot(query(col,orderBy('createdAt','desc')),(snapshot)=>{
     window._fbIds=window._fbIds||[];
-    window._fbIds.forEach(fid=>{const i=restaurants.findIndex(r=>r.firebaseId===fid);if(i>-1)restaurants.splice(i,1);});
+    window._fbIds.forEach(fid=>{const i=window.restaurants.findIndex(r=>r.firebaseId===fid);if(i>-1)window.restaurants.splice(i,1);});
     window._fbIds=[];
-    snapshot.forEach(d=>{if(!restaurants.find(r=>r.firebaseId===d.id)){restaurants.push({...d.data(),firebaseId:d.id,id:d.id});window._fbIds.push(d.id);}});
+    snapshot.forEach(d=>{if(!window.restaurants.find(r=>r.firebaseId===d.id)){window.restaurants.push({...d.data(),firebaseId:d.id,id:d.id});window._fbIds.push(d.id);}});
     if(window.filterData)window.filterData();
-if(window.renderNewlyAdded)window.renderNewlyAdded();
-if(window.renderAddedList)window.renderAddedList();
+    if(window.renderNewlyAdded)window.renderNewlyAdded();
+    if(window.renderAddedList)window.renderAddedList();
 },(error)=>{
     console.warn('Firestore error:',error.message);
     if(window.filterData)window.filterData();
-if(window.renderNewlyAdded)window.renderNewlyAdded();
-});
+    if(window.renderNewlyAdded)window.renderNewlyAdded();
 });
 const isOwnerAuth=()=>window._isFirebaseOwner||localStorage.getItem('zedbites-owner')==='true';
 
 window.saveToFirebase=async r=>{
-    if(!isOwnerAuth()){showToast('⚠️ Not authorised');return null;}
-    try{const ref=await addDoc(col,{...r,createdAt:Date.now()});return ref.id;}catch(e){showToast('⚠️ Cloud save failed: '+e.message);return null;}
+    if(!isOwnerAuth()){window.showToast('⚠️ Not authorised');return null;}
+    try{const ref=await addDoc(col,{...r,createdAt:Date.now()});return ref.id;}catch(e){window.showToast('⚠️ Cloud save failed: '+e.message);return null;}
 };
 window.deleteFromFirebase=async fid=>{
-    if(!isOwnerAuth()){showToast('⚠️ Not authorised');return;}
-    try{await deleteDoc(doc(db,'restaurants',fid));}catch(e){showToast('⚠️ Cloud delete failed: '+e.message);}
+    if(!isOwnerAuth()){window.showToast('⚠️ Not authorised');return;}
+    try{await deleteDoc(doc(db,'restaurants',fid));}catch(e){window.showToast('⚠️ Cloud delete failed: '+e.message);}
 };
 window.updateInFirebase=async(fid,data)=>{
-    if(!isOwnerAuth()){showToast('⚠️ Not authorised');return;}
-    try{await updateDoc(doc(db,'restaurants',fid),data);}catch(e){showToast('⚠️ Cloud update failed: '+e.message);}
+    if(!isOwnerAuth()){window.showToast('⚠️ Not authorised');return;}
+    try{await updateDoc(doc(db,'restaurants',fid),data);}catch(e){window.showToast('⚠️ Cloud update failed: '+e.message);}
 };
 
 // ── RATINGS ───────────────────────────────────────────────────
@@ -970,14 +969,14 @@ onSnapshot(ratingsCol,(snapshot)=>{
     snapshot.forEach(d=>{
         const data=d.data();
         if(data.restaurantId){
-            if(!ratings[data.restaurantId])ratings[data.restaurantId]=[];
-            if(!ratings[data.restaurantId].find(r=>r.fbId===d.id)){
-                ratings[data.restaurantId].push({fbId:d.id,stars:data.stars,comment:data.comment||'',date:data.date});
+            if(!window.ratings[data.restaurantId])window.ratings[data.restaurantId]=[];
+            if(!window.ratings[data.restaurantId].find(r=>r.fbId===d.id)){
+                window.ratings[data.restaurantId].push({fbId:d.id,stars:data.stars,comment:data.comment||'',date:data.date});
             }
         }
     });
-    if(window.currentModalId)renderRatingSection(window.currentModalId);
-    filterData();
+    if(window.currentModalId&&window.renderRatingSection)window.renderRatingSection(window.currentModalId);
+    if(window.filterData)window.filterData();
 });
 window.saveRatingToFirebase=async(restaurantId,stars,comment)=>{
     // Wait up to 4s for anonymous auth to be ready
@@ -990,7 +989,7 @@ window.saveRatingToFirebase=async(restaurantId,stars,comment)=>{
     try{
         await addDoc(ratingsCol,{restaurantId,stars,comment:comment||'',date:new Date().toLocaleDateString(),createdAt:Date.now()});
         return true;
-    }catch(e){showToast('⚠️ Rating save failed');return false;}
+    }catch(e){window.showToast('⚠️ Rating save failed');return false;}
 };
 
 // ── SUBMISSIONS ───────────────────────────────────────────────
@@ -1004,27 +1003,27 @@ window.submitToFirebase=async(data)=>{
         });
     }
     try{await addDoc(subCol,{...data,status:'pending',createdAt:Date.now()});return true;}
-    catch(e){showToast('⚠️ Submission failed');return false;}
+    catch(e){window.showToast('⚠️ Submission failed');return false;}
 };
 onSnapshot(query(subCol,orderBy('createdAt','desc')),(snapshot)=>{
     const pending=[];
     snapshot.forEach(d=>pending.push({fbId:d.id,...d.data()}));
     window._pendingSubmissions=pending;
     const adminTab=document.getElementById('tabAdmin');
-    if(adminTab&&adminTab.style.display!=='none')renderAdminDashboard();
+    if(adminTab&&adminTab.style.display!=='none'&&window.renderAdminDashboard)window.renderAdminDashboard();
 });
 window.approveSubmission=async(sub)=>{
-    if(!isOwnerAuth()){showToast('⚠️ Not authorised');return;}
+    if(!isOwnerAuth()){window.showToast('⚠️ Not authorised');return;}
     try{
         await addDoc(col,{name:sub.name,city:sub.city,category:sub.category,location:sub.location,phone:sub.phone,open:sub.open||9,close:sub.close||21,dishes:sub.dishes||['Local Favourite'],image:sub.image||'https://images.unsplash.com/photo-1567620985032-074b46254ffb?w=400',custom:true,createdAt:Date.now()});
         await deleteDoc(doc(db,'submissions',sub.fbId));
-        showToast('Restaurant approved!');
-    }catch(e){showToast('⚠️ Approval failed: '+e.message);}
+        window.showToast('Restaurant approved!');
+    }catch(e){window.showToast('⚠️ Approval failed: '+e.message);}
 };
 window.rejectSubmission=async(fbId)=>{
-    if(!isOwnerAuth()){showToast('⚠️ Not authorised');return;}
-    try{await deleteDoc(doc(db,'submissions',fbId));showToast('Submission rejected');}
-    catch(e){showToast('⚠️ Rejection failed');}
+    if(!isOwnerAuth()){window.showToast('⚠️ Not authorised');return;}
+    try{await deleteDoc(doc(db,'submissions',fbId));window.showToast('Submission rejected');}
+    catch(e){window.showToast('⚠️ Rejection failed');}
 };
 </script>
 
@@ -1119,6 +1118,14 @@ window.onload=()=>{
         else{setTimeout(()=>{splash.style.opacity='0';setTimeout(()=>{splash.style.display='none';localStorage.setItem('zedbites-visited-site','1');},600);},1200);}
     }
 };
+// Expose functions as window globals so Firebase module script can call them
+window.filterData=filterData;
+window.renderNewlyAdded=renderNewlyAdded;
+window.renderAddedList=renderAddedList;
+window.showToast=showToast;
+window.renderRatingSection=renderRatingSection;
+window.renderAdminDashboard=renderAdminDashboard;
+
 function switchTab(tab,btn){
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
     document.getElementById('tabList').style.display=tab==='list'?'block':'none';
@@ -1128,8 +1135,8 @@ function switchTab(tab,btn){
     if(tab==='feed')renderFeed();
 }
 
-// DATA
-const restaurants=[
+// DATA — exposed as window globals so Firebase module script can access them
+window.restaurants=[
     {id:1,city:"Lusaka",name:"Chuma Grill",category:"fine",location:"Radisson Blu",phone:"+260211368900",image:"https://images.unsplash.com/photo-1544025162-d76694265947?w=400",open:12,close:22,dishes:["Grilled Tilapia","Nyama Choma","Sadza Platter"]},
     {id:2,city:"Lusaka",name:"Piatto Restaurants",category:"fastfood",location:"East Park Mall",phone:"+260211846465",image:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400",open:9,close:22,dishes:["Pizza Margherita","Pasta Arrabbiata","Garlic Bread"]},
     {id:3,city:"Lusaka",name:"Mint Lounge",category:"cafe",location:"Acacia Park",phone:"+260766792122",image:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",open:7,close:19,dishes:["Flat White","Avocado Toast","Banana Bread"]},
@@ -1190,10 +1197,12 @@ let currentCat='all',currentSort='default',currentModalId=null,showingFavs=false
 let favourites=JSON.parse(localStorage.getItem('zedbites-favs')||'[]');
 let visited=JSON.parse(localStorage.getItem('zedbites-visited')||'[]');
 let recentlyViewed=JSON.parse(localStorage.getItem('zedbites-recent')||'[]');
-let ratings=JSON.parse(localStorage.getItem('zedbites-ratings')||'{}');
+window.ratings=JSON.parse(localStorage.getItem('zedbites-ratings')||'{}');
+const ratings=window.ratings;
 let viewCounts=JSON.parse(localStorage.getItem('zedbites-views')||'{}');
 let customRestaurants=JSON.parse(localStorage.getItem('zedbites-custom')||'[]');
 let featuredIds=JSON.parse(localStorage.getItem('zedbites-featured')||'[]');
+const restaurants=window.restaurants;
 
 // HELPERS
 const catIcon=c=>c==='fine'?'ph-fork-knife':c==='fastfood'?'ph-hamburger':c==='local'?'ph-cooking-pot':'ph-coffee';
@@ -1891,10 +1900,10 @@ function spinWheel(){
     }
     requestAnimationFrame(animate);
 }
+</script>
 <footer style="text-align:center; padding:20px; font-size:12px; color:#888;">
   Images are for illustration purposes only. ZedBites is not affiliated with any listed restaurant.
 </footer>
-</script>
     <script>
 // Emergency splash fallback — fires even if Firebase module fails
 setTimeout(function(){
