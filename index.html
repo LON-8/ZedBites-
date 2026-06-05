@@ -1892,5 +1892,15 @@ function spinWheel(){
   Images are for illustration purposes only. ZedBites is not affiliated with any listed restaurant.
 </footer>
 </script>
+    <script>
+// Emergency splash fallback — fires even if Firebase module fails
+setTimeout(function(){
+    var s=document.getElementById('splash');
+    if(s&&s.style.display!=='none'){
+        s.style.opacity='0';
+        setTimeout(function(){s.style.display='none';},600);
+    }
+},4000);
+    </script>
 </body>
 </html>
